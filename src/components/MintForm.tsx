@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, Plus, X, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { uploadToIPFS, createMetadata, createNFTCollection, mintNFT } from '@/lib/hedera';
+import { HEDERA_CONFIG, isConfigured } from '@/config/hedera.config';
 
 const MintForm = () => {
   const { toast } = useToast();
@@ -58,24 +60,93 @@ const MintForm = () => {
 
   const handleMint = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.image) return;
+
     setIsMinting(true);
 
-    // TODO: Phase 2 - Implement NFT minting logic
-    // 1. Upload image to nft.storage (IPFS)
-    // 2. Create metadata.json with image URL and attributes
-    // 3. Upload metadata to nft.storage
-    // 4. Create NFT token using TokenCreateTransaction
-    // 5. Mint NFT using TokenMintTransaction with metadata CID
-    // 6. Show success toast with transaction details
-    
-    console.log('TODO: Mint NFT with data:', formData);
-    
-    toast({
-      title: 'Minting NFT...',
-      description: 'This feature will be implemented in Phase 2',
-    });
+    try {
+      if (!isConfigured()) {
+        toast({
+          title: 'Configuration Required',
+          description: 'Please configure your Hedera credentials in src/config/hedera.config.ts',
+          variant: 'destructive',
+        });
+        setIsMinting(false);
+        return;
+      }
 
-    setIsMinting(false);
+      toast({
+        title: 'Uploading to IPFS...',
+        description: 'Step 1 of 4: Uploading image',
+      });
+
+      // Step 1: Upload image to IPFS
+      const imageURL = await uploadToIPFS(formData.image);
+
+      toast({
+        title: 'Creating Metadata...',
+        description: 'Step 2 of 4: Generating HIP-412 metadata',
+      });
+
+      // Step 2: Create and upload metadata
+      const metadataCID = await createMetadata(
+        formData.name,
+        formData.description,
+        imageURL,
+        formData.attributes,
+        HEDERA_CONFIG.treasuryAccountId,
+        formData.type,
+        formData.rarity
+      );
+
+      toast({
+        title: 'Creating Collection...',
+        description: 'Step 3 of 4: Creating NFT collection on Hedera',
+      });
+
+      // Step 3: Create NFT collection (in production, you'd check if it exists first)
+      const tokenId = await createNFTCollection(
+        HEDERA_CONFIG.collectionName,
+        HEDERA_CONFIG.collectionSymbol,
+        HEDERA_CONFIG.royaltyPercentage,
+        HEDERA_CONFIG.treasuryAccountId,
+        HEDERA_CONFIG.treasuryPrivateKey
+      );
+
+      toast({
+        title: 'Minting NFT...',
+        description: 'Step 4 of 4: Minting your collectible',
+      });
+
+      // Step 4: Mint the NFT
+      const serialNumber = await mintNFT(tokenId, metadataCID, HEDERA_CONFIG.treasuryPrivateKey);
+
+      toast({
+        title: 'NFT Minted Successfully!',
+        description: `Token ID: ${tokenId}, Serial: ${serialNumber}`,
+      });
+
+      // Reset form
+      setFormData({
+        name: '',
+        description: '',
+        type: '',
+        rarity: 'Common',
+        image: null,
+        attributes: [],
+      });
+      setImagePreview(null);
+    } catch (error: any) {
+      console.error('Minting error:', error);
+      toast({
+        title: 'Minting Failed',
+        description: error.message || 'Failed to mint NFT. Check console for details.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsMinting(false);
+    }
   };
 
   return (
