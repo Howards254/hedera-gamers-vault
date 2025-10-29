@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: gamersnft-backend
-    runtime: node
-    buildCommand: npm ci
-    startCommand: node server/index.js
-    env: node
