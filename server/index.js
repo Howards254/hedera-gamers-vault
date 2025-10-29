@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+
 import { createNFTCollection, mintNFT } from './nft-service.js';
 import { createNFTRecord, getNFTsByOwner, listNFTForSale, getListedNFTs, purchaseNFT, registerGame, getGameByApiKey, getGamesByDeveloper, getAllGames, createTemplate, getTemplatesByGame, getTemplate, updateGameTokenId, logPayment, getFailedPayments, createPendingPurchase } from './database.js';
 import { startPaymentProcessor } from './payment-processor.js';
@@ -10,7 +11,24 @@ import { verifyPayment, forwardPaymentToSeller } from './payment-verification.js
 console.log('Platform Account:', process.env.VITE_MY_ACCOUNT_ID);
 
 const app = express();
-app.use(cors());
+
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://localhost:5173',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all for now, restrict later
+    }
+  },
+  credentials: true
+}));
+
 app.use(express.json());
 
 app.post('/api/create-collection', async (req, res) => {
@@ -290,4 +308,4 @@ app.get('/api/purchase-status/:purchaseId', async (req, res) => {
 app.listen(3001, () => {
   console.log('NFT service running on port 3001');
   startPaymentProcessor();
-});}
+});
