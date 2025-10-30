@@ -1,6 +1,6 @@
-import { getPendingPurchases, updatePendingPurchaseStatus, getListedNFTs, purchaseNFT, logPayment } from './database.js';
+import { getPendingPurchases, updatePendingPurchaseStatus, getListedNFTs, purchaseNFT, logPayment } from './database-switch.js';
 import { verifyPayment, forwardPaymentToSeller } from './payment-verification.js';
-import db from './database.js';
+import db from './database-switch.js';
 
 export async function processPendingPayments() {
   const pending = getPendingPurchases();

@@ -3,9 +3,9 @@ import express from 'express';
 import cors from 'cors';
 
 import { createNFTCollection, mintNFT } from './nft-service.js';
-import { createNFTRecord, getNFTsByOwner, listNFTForSale, getListedNFTs, purchaseNFT, registerGame, getGameByApiKey, getGamesByDeveloper, getAllGames, createTemplate, getTemplatesByGame, getTemplate, updateGameTokenId, logPayment, getFailedPayments, createPendingPurchase } from './database.js';
+import { createNFTRecord, getNFTsByOwner, listNFTForSale, getListedNFTs, purchaseNFT, registerGame, getGameByApiKey, getGamesByDeveloper, getAllGames, createTemplate, getTemplatesByGame, getTemplate, updateGameTokenId, logPayment, getFailedPayments, createPendingPurchase } from './database-switch.js';
 import { startPaymentProcessor } from './payment-processor.js';
-import db from './database.js';
+import db from './database-switch.js';
 import { verifyPayment, forwardPaymentToSeller } from './payment-verification.js';
 
 console.log('Platform Account:', process.env.VITE_MY_ACCOUNT_ID);
