@@ -1,7 +1,12 @@
 node_modules/
 .env
 .env.local
+.env.example
+server/.env
 dist/
 marketplace.db
+server/marketplace.db
 *.log
 .DS_Store
+*.md
+!README.md
