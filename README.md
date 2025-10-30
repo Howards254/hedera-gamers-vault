@@ -1,4 +1,4 @@
-# Hedera Gamers Vault - NFT Marketplace
+# GamersNFT - NFT Marketplace
 
 A production-ready NFT marketplace for gaming collectibles built on Hedera Hashgraph.
 
