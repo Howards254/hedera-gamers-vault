@@ -214,6 +214,14 @@ Integrate NFT rewards into your game:
 - Visit `/developers` page to register your game
 - Get API key and start minting NFTs for players
 
+## 👥 Team
+
+### Karol Onyango - Founder & Lead Developer
+- **Hedera Certified Developer** - [View Certification](https://drive.google.com/file/d/1OYh2PzHG0ehhTCDr898MVjXB95rWZTvn/view?usp=drive_link)
+- Full-stack blockchain developer specializing in Hedera Hashgraph
+- Built complete NFT marketplace with gaming integration
+- Expertise in React, TypeScript, Node.js, and Hedera SDK
+
 ## Support
 
 For issues or questions:
