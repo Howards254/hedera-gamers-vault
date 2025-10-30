@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
+import { API_BASE_URL } from '@/config';
 
 const Marketplace = () => {
   const { walletState } = useWallet();
@@ -25,7 +26,7 @@ const Marketplace = () => {
 
   const fetchGames = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/v1/games');
+      const response = await fetch(`${API_BASE_URL}/api/v1/games`);
       const data = await response.json();
       setGames(data.games || []);
     } catch (error) {
@@ -87,7 +88,7 @@ const Marketplace = () => {
 
     setIsVerifying(true);
     try {
-      const response = await fetch('http://localhost:3001/api/verify-and-purchase', {
+      const response = await fetch(`${API_BASE_URL}/api/verify-and-purchase`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

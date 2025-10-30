@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { useWallet } from '@/hooks/useWallet';
+import { API_BASE_URL } from '@/config';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, RefreshCw, Shield, Lock, Activity } from 'lucide-react';
@@ -20,7 +21,7 @@ const AdminPayments = () => {
   const fetchFailedPayments = async () => {
     if (!isAdmin) return;
     try {
-      const response = await fetch('http://localhost:3001/api/admin/failed-payments');
+      const response = await fetch(`${API_BASE_URL}/api/admin/failed-payments`);
       const data = await response.json();
       setFailedPayments(data.payments || []);
     } catch (error) {

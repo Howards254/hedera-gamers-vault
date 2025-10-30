@@ -11,6 +11,7 @@ import {
   TokenAssociateTransaction,
   Hbar,
 } from '@hashgraph/sdk';
+import { API_BASE_URL } from '@/config';
 
 export const uploadToPinata = async (file: File): Promise<string> => {
   const formData = new FormData();
@@ -93,7 +94,7 @@ export const createNFTCollection = async (
   royaltyFee: number = 5,
   publicKey?: string
 ): Promise<string> => {
-  const response = await fetch('http://localhost:3001/api/create-collection', {
+  const response = await fetch(`${API_BASE_URL}/api/create-collection`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, symbol }),
@@ -112,7 +113,7 @@ export const mintNFT = async (
   tokenId: string,
   metadataCID: string
 ): Promise<number> => {
-  const response = await fetch('http://localhost:3001/api/mint-nft', {
+  const response = await fetch(`${API_BASE_URL}/api/mint-nft`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ tokenId, metadataCID, recipientAccountId: accountId }),

@@ -5,6 +5,7 @@ import { useNFTs } from '@/hooks/useNFTs';
 import { Wallet, Package, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { API_BASE_URL } from '@/config';
 
 const MyCollectibles = () => {
   const { walletState } = useWallet();
@@ -13,7 +14,7 @@ const MyCollectibles = () => {
 
   const handleListNFT = async (nftId: number, price: number) => {
     try {
-      const response = await fetch('http://localhost:3001/api/list-nft', {
+      const response = await fetch(`${API_BASE_URL}/api/list-nft`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nftId, price, ownerAccountId: walletState.account?.accountId }),

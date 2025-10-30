@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getNFTMetadata } from '@/lib/hedera';
 import type { NFT } from './useNFTs';
+import { API_BASE_URL } from '@/config';
 
 export const useMarketplace = () => {
   const [listings, setListings] = useState<(NFT & { price: number; seller: string })[]>([]);
@@ -9,7 +10,7 @@ export const useMarketplace = () => {
   const fetchMarketplaceListings = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/marketplace');
+      const response = await fetch(`${API_BASE_URL}/api/marketplace`);
       const { nfts: dbNFTs } = await response.json();
       
       const listingsWithMetadata = await Promise.all(

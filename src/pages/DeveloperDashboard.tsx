@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import { useWallet } from '@/hooks/useWallet';
 import { Button } from '@/components/ui/button';
+import { API_BASE_URL } from '@/config';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -32,7 +33,7 @@ const DeveloperDashboard = () => {
 
   const fetchGames = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/v1/games/my-games/${walletState.account?.accountId}`);
+      const response = await fetch(`${API_BASE_URL}/api/v1/games/my-games/${walletState.account?.accountId}`);
       const data = await response.json();
       setGames(data.games || []);
     } catch (error) {
@@ -42,7 +43,7 @@ const DeveloperDashboard = () => {
 
   const fetchTemplates = async (gameId: number) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/v1/games/${gameId}/templates`);
+      const response = await fetch(`${API_BASE_URL}/api/v1/games/${gameId}/templates`);
       const data = await response.json();
       setTemplates(data.templates || []);
     } catch (error) {
@@ -55,7 +56,7 @@ const DeveloperDashboard = () => {
     const formData = new FormData(e.currentTarget);
     
     try {
-      const response = await fetch('http://localhost:3001/api/v1/games/register', {
+      const response = await fetch(`${API_BASE_URL}/api/v1/games/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -86,7 +87,7 @@ const DeveloperDashboard = () => {
     const formData = new FormData(e.currentTarget);
     
     try {
-      const response = await fetch(`http://localhost:3001/api/v1/games/${selectedGame.id}/templates`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/games/${selectedGame.id}/templates`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

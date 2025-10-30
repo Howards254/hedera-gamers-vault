@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useWallet } from './useWallet';
 import { queryAccountNFTs, getNFTMetadata } from '@/lib/hedera';
+import { API_BASE_URL } from '@/config';
 
 export interface NFT {
   id?: number;
@@ -28,7 +29,7 @@ export const useNFTs = () => {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:3001/api/my-nfts/${walletState.account.accountId}`);
+      const response = await fetch(`${API_BASE_URL}/api/my-nfts/${walletState.account.accountId}`);
       
       if (!response.ok) {
         throw new Error('Backend server not responding');
