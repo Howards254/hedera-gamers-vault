@@ -31,6 +31,11 @@ app.use(cors({
 
 app.use(express.json());
 
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.post('/api/create-collection', async (req, res) => {
   try {
     const { name, symbol } = req.body;
