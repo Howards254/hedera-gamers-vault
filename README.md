@@ -37,21 +37,27 @@ npm install
 
 ### 2. Configure Environment Variables
 
-Create/update `.env` file:
+Create `.env` file in project root:
 
 ```env
-# Your Hedera Testnet Account (for backend operations)
-MY_ACCOUNT_ID=0.0.YOUR_ACCOUNT_ID
-M_PRIVATE_KEY=your_private_key_here
+# Your Hedera Testnet Account
+VITE_MY_ACCOUNT_ID=0.0.YOUR_ACCOUNT_ID
+VITE_MY_PRIVATE_KEY=your_private_key_here
 
 # HashConnect Configuration
 VITE_APP_ID="Hedera Gamers Vault"
-VITE_PROJECT_ID="hedera-gamers-vault-dapp"
-VITE_HEDERA_NETWORK="testnet"
+VITE_PROJECT_ID=your_walletconnect_project_id
+VITE_HEDERA_NETWORK=testnet
 
-# Pinata Configuration (Get from https://pinata.cloud)
+# Pinata IPFS (Get from https://pinata.cloud)
 VITE_PINATA_JWT=your_pinata_jwt_token
-VITE_PINATA_GATEWAY=your_gateway_url
+VITE_PINATA_GATEWAY=gateway.pinata.cloud
+
+# Admin Access (your account ID)
+VITE_ADMIN_ACCOUNTS=0.0.YOUR_ACCOUNT_ID
+
+# Backend URL (for local dev)
+VITE_BACKEND_URL=http://localhost:3001
 ```
 
 ### 3. Get Pinata Credentials
@@ -66,7 +72,8 @@ VITE_PINATA_GATEWAY=your_gateway_url
 npm run dev
 ```
 
-Visit `http://localhost:8080` (local) or `https://gamersnft.netlify.app` (live demo)
+**Live Demo**: https://gamersnft.netlify.app  
+**Local Development**: http://localhost:8080
 
 ## Usage
 
@@ -193,11 +200,19 @@ npm run build
 
 MIT
 
-## Live Demo
+## 🌐 Live Demo
 
 - **Frontend**: https://gamersnft.netlify.app
 - **Backend API**: https://gamersnft-backend.onrender.com
 - **Network**: Hedera Testnet
+- **Status**: ✅ Production Ready
+
+## 🎮 For Game Developers
+
+Integrate NFT rewards into your game:
+- See `/sdk/README.md` for SDK documentation
+- Visit `/developers` page to register your game
+- Get API key and start minting NFTs for players
 
 ## Support
 

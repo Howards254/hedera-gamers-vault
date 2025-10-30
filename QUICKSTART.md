@@ -1,6 +1,8 @@
 # Quick Start Guide
 
-Get your Hedera Gamers Vault NFT marketplace running in 5 minutes!
+Get your Hedera Gamers Vault NFT marketplace running locally in 5 minutes!
+
+**Already deployed?** Visit https://gamersnft.netlify.app to use the live version!
 
 ## Step 1: Install Dependencies (1 min)
 
@@ -18,23 +20,35 @@ npm install
 
 ## Step 3: Configure Environment (1 min)
 
-Update `.env` file:
+Create `.env` file in project root:
 
 ```env
-# Keep these as is
-MY_ACCOUNT_ID = 0.0.7010419
-M_PRIVATE_KEY = 0x7d4cc1b44ae9ab24fbdf8b2035a6e282e40b78056b46091becb61aa8a7b045c7
-VITE_APP_ID = "Hedera Gamers Vault"
-VITE_PROJECT_ID = "hedera-gamers-vault-dapp"
-VITE_HEDERA_NETWORK = "testnet"
+# Your Hedera Testnet Account (get from portal.hedera.com)
+VITE_MY_ACCOUNT_ID=0.0.YOUR_ACCOUNT_ID
+VITE_MY_PRIVATE_KEY=your_private_key_here
 
-# Add your Pinata credentials here
-VITE_PINATA_JWT = "paste_your_jwt_token_here"
-VITE_PINATA_GATEWAY = "paste_your_gateway_url_here"
+# HashConnect (get from cloud.walletconnect.com)
+VITE_APP_ID="Hedera Gamers Vault"
+VITE_PROJECT_ID=your_walletconnect_project_id
+VITE_HEDERA_NETWORK=testnet
+
+# Pinata IPFS (get from pinata.cloud)
+VITE_PINATA_JWT=your_pinata_jwt_token
+VITE_PINATA_GATEWAY=gateway.pinata.cloud
+
+# Admin & Backend
+VITE_ADMIN_ACCOUNTS=0.0.YOUR_ACCOUNT_ID
+VITE_BACKEND_URL=http://localhost:3001
 ```
 
-## Step 4: Run Development Server (30 sec)
+## Step 4: Run Backend & Frontend (30 sec)
 
+**Terminal 1 - Backend:**
+```bash
+node server/index.js
+```
+
+**Terminal 2 - Frontend:**
 ```bash
 npm run dev
 ```
@@ -86,30 +100,31 @@ Visit http://localhost:8080
 
 ## What's Next?
 
-✅ **You're ready for production!**
+### Use the Live Site
+- Visit https://gamersnft.netlify.app
+- Connect your HashPack wallet
+- Start minting and trading NFTs!
 
-### Deploy to Vercel (Free)
-1. Push code to GitHub
-2. Import in Vercel
-3. Add environment variables
-4. Deploy!
+### Deploy Your Own
+- See `LIVE_DEPLOYMENT.md` for deployment guide
+- Backend: Render (free)
+- Frontend: Netlify (free)
 
-### Customize
-- Update branding in `src/pages/Index.tsx`
-- Change colors in `tailwind.config.ts`
-- Add more NFT attributes
-- Implement advanced marketplace features
+### For Game Developers
+- Register your game at `/developers`
+- Get API key
+- See `/sdk/README.md` for integration
+- Mint NFTs for your players!
 
 ### Go to Mainnet
-1. Create Hedera Mainnet account
-2. Change `VITE_HEDERA_NETWORK` to `"mainnet"`
-3. Update Mirror Node URLs in `src/lib/hedera.ts`
-4. Test thoroughly!
+- See `MAINNET_MIGRATION.md` when ready
+- Test thoroughly on testnet first!
 
 ## Need Help?
 
 - 📖 Full docs: See `README.md`
-- 🚀 Deployment: See `DEPLOYMENT.md`
+- 🚀 Deployment: See `LIVE_DEPLOYMENT.md`
+- 🎮 Game Integration: See `/sdk/README.md`
 - 💬 Hedera Discord: https://hedera.com/discord
 - 📚 Hedera Docs: https://docs.hedera.com
 
