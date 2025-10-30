@@ -92,12 +92,20 @@ app.post('/api/verify-and-purchase', async (req, res) => {
       return res.status(404).json({ error: 'NFT not found' });
     }
     
-    // Verify payment on blockchain
+    // Prevent self-purchase
+    if (nft.owner_account_id === buyerAccountId) {
+      return res.status(400).json({ error: 'You cannot buy your own NFT' });
+    }
+    
+    // Create pending purchase for background processor safety net
+    const purchaseId = createPendingPurchase(nftId, buyerAccountId, nft.price);
+    
+    // Verify payment on blockchain immediately
     const verification = await verifyPayment(buyerAccountId, nft.owner_account_id, nft.price);
     
     if (!verification.verified) {
       logPayment(nftId, buyerAccountId, nft.owner_account_id, nft.price, 'VERIFICATION_FAILED', null, null, 'Payment not found on blockchain');
-      return res.status(400).json({ error: 'Payment not verified. Please ensure you sent the correct amount.' });
+      return res.status(400).json({ error: 'Payment not found. Please wait 5 seconds after sending, then try again.' });
     }
     
     // Log payment received
@@ -112,7 +120,7 @@ app.post('/api/verify-and-purchase', async (req, res) => {
     const forwardResult = await forwardPaymentToSeller(nft.owner_account_id, nft.price, royaltyPercentage, developerAccountId);
     
     if (!forwardResult.success) {
-      db.prepare('UPDATE payment_logs SET status = "FORWARD_FAILED", error_message = ? WHERE id = ?')
+      db.prepare("UPDATE payment_logs SET status = 'FORWARD_FAILED', error_message = ? WHERE id = ?")
         .run(forwardResult.error, paymentLogId);
       return res.status(500).json({ error: 'Payment verified but failed to forward to seller. Support will refund you.' });
     }
@@ -125,7 +133,8 @@ app.post('/api/verify-and-purchase', async (req, res) => {
     const { seller, price } = purchaseNFT(nftId, buyerAccountId);
     
     // Mark as completed
-    db.prepare('UPDATE payment_logs SET status = "COMPLETED" WHERE id = ?').run(paymentLogId);
+    db.prepare("UPDATE payment_logs SET status = 'COMPLETED' WHERE id = ?").run(paymentLogId);
+    db.prepare("UPDATE pending_purchases SET status = 'COMPLETED' WHERE id = ?").run(purchaseId);
     
     res.json({ 
       success: true, 
@@ -137,10 +146,11 @@ app.post('/api/verify-and-purchase', async (req, res) => {
     });
   } catch (error) {
     if (paymentLogId) {
-      db.prepare('UPDATE payment_logs SET status = "ERROR", error_message = ? WHERE id = ?')
+      db.prepare("UPDATE payment_logs SET status = 'ERROR', error_message = ? WHERE id = ?")
         .run(error.message, paymentLogId);
     }
-    res.status(500).json({ error: error.message });
+    console.error('Purchase error:', error);
+    res.status(500).json({ error: 'Purchase failed. If you sent payment, it will be processed automatically.' });
   }
 });
 
@@ -269,41 +279,65 @@ app.post('/api/v1/games/:gameId/mint', async (req, res) => {
   }
 });
 
-app.post('/api/initiate-purchase', async (req, res) => {
+app.post('/api/v1/games/:gameId/mint-dynamic', async (req, res) => {
   try {
-    const { nftId, buyerAccountId } = req.body;
+    const { gameId } = req.params;
+    const { apiKey, playerAccountId, name, description, imageUrl, type, rarity, attributes } = req.body;
     
-    const nft = getListedNFTs().find(n => n.id === nftId);
-    if (!nft) {
-      return res.status(404).json({ error: 'NFT not found' });
+    const game = getGameByApiKey(apiKey);
+    if (!game || game.id !== parseInt(gameId)) {
+      return res.status(401).json({ error: 'Invalid API key' });
     }
     
-    const purchaseId = createPendingPurchase(nftId, buyerAccountId, nft.price);
+    if (!name || !description || !imageUrl || !playerAccountId) {
+      return res.status(400).json({ error: 'Missing required fields: name, description, imageUrl, playerAccountId' });
+    }
+    
+    // Build metadata directly from request
+    const fullMetadata = {
+      name,
+      description,
+      image: imageUrl,
+      type: type || rarity || 'Common',
+      creator: game.name,
+      createdAt: new Date().toISOString(),
+      attributes: attributes || {}
+    };
+    
+    // Upload metadata to IPFS
+    const metadataResponse = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.VITE_PINATA_JWT}`
+      },
+      body: JSON.stringify({ pinataContent: fullMetadata })
+    });
+    const { IpfsHash: metadataCID } = await metadataResponse.json();
+    
+    // Create collection if not exists, then mint NFT
+    let tokenId = game.token_id;
+    if (!tokenId) {
+      tokenId = await createNFTCollection(game.name, game.name.substring(0, 4).toUpperCase());
+      updateGameTokenId(game.id, tokenId);
+    }
+    
+    const serialNumber = await mintNFT(tokenId, metadataCID, playerAccountId);
+    const nftId = createNFTRecord(tokenId, serialNumber, playerAccountId, metadataCID);
     
     res.json({ 
       success: true, 
-      purchaseId,
-      message: 'Purchase initiated. System will automatically verify payment within 10 seconds.'
+      nftId,
+      serialNumber,
+      metadataCID,
+      metadata: fullMetadata
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-app.get('/api/purchase-status/:purchaseId', async (req, res) => {
-  try {
-    const { purchaseId } = req.params;
-    const purchase = db.prepare('SELECT * FROM pending_purchases WHERE id = ?').get(purchaseId);
-    
-    if (!purchase) {
-      return res.status(404).json({ error: 'Purchase not found' });
-    }
-    
-    res.json({ status: purchase.status });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+
 
 app.listen(3001, () => {
   console.log('NFT service running on port 3001');

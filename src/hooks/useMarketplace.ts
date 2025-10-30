@@ -22,6 +22,8 @@ export const useMarketplace = () => {
               serial_number: nft.serial_number,
               metadata: nft.metadata_cid,
               account_id: nft.owner_account_id,
+              owner_account_id: nft.owner_account_id,
+              game_id: nft.game_id,
               created_timestamp: nft.created_at,
               metadataJson,
               price: nft.price,

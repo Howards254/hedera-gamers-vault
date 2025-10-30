@@ -5,8 +5,6 @@ const PLATFORM_ACCOUNT_ID = process.env.VITE_MY_ACCOUNT_ID;
 
 export async function verifyPayment(buyerAccountId, sellerAccountId, listingPrice) {
   try {
-    await new Promise(resolve => setTimeout(resolve, 5000));
-
     const response = await fetch(
       `https://testnet.mirrornode.hedera.com/api/v1/transactions?account.id=${buyerAccountId}&transactiontype=CRYPTOTRANSFER&order=desc&limit=10`
     );

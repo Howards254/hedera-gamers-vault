@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: hedera-gamers-vault-backend
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && node index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: VITE_MY_ACCOUNT_ID
+        sync: false
+      - key: VITE_MY_PRIVATE_KEY
+        sync: false
+      - key: VITE_PINATA_JWT
+        sync: false
+      - key: VITE_PINATA_GATEWAY
+        sync: false
+      - key: VITE_ADMIN_ACCOUNTS
+        sync: false
+      - key: FRONTEND_URL
+        sync: false

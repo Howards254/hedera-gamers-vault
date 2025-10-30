@@ -61,6 +61,7 @@ const Marketplace = () => {
   const [paymentDialog, setPaymentDialog] = useState<any>(null);
   const [copied, setCopied] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [paymentSent, setPaymentSent] = useState(false);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -81,12 +82,12 @@ const Marketplace = () => {
     setPaymentDialog(listing);
   };
 
-  const initiatePurchase = async () => {
+  const verifyPayment = async () => {
     if (!paymentDialog || !walletState.account) return;
 
     setIsVerifying(true);
     try {
-      const response = await fetch('http://localhost:3001/api/initiate-purchase', {
+      const response = await fetch('http://localhost:3001/api/verify-and-purchase', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -96,34 +97,25 @@ const Marketplace = () => {
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Payment verification failed');
+      }
 
-      const purchaseId = data.purchaseId;
-      toast({ title: 'Waiting for payment...', description: 'System will auto-verify within 10 seconds' });
-
-      // Poll for status
-      const checkStatus = async () => {
-        for (let i = 0; i < 30; i++) {
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          
-          const statusResponse = await fetch(`http://localhost:3001/api/purchase-status/${purchaseId}`);
-          const statusData = await statusResponse.json();
-          
-          if (statusData.status === 'COMPLETED') {
-            toast({ title: 'Purchase successful!', description: `You now own ${paymentDialog.metadataJson?.name || 'this NFT'}!` });
-            setPaymentDialog(null);
-            await refetch();
-            return;
-          } else if (statusData.status === 'ERROR' || statusData.status === 'FORWARD_FAILED') {
-            throw new Error('Purchase failed. Support will refund you.');
-          }
-        }
-        throw new Error('Payment timeout. If you paid, it will be processed automatically.');
-      };
-
-      await checkStatus();
+      toast({ 
+        title: 'Purchase successful!', 
+        description: `You now own ${paymentDialog.metadataJson?.name || 'this NFT'}!` 
+      });
+      
+      setPaymentDialog(null);
+      setPaymentSent(false);
+      await refetch();
     } catch (error: any) {
-      toast({ title: 'Purchase failed', description: error.message, variant: 'destructive' });
+      toast({ 
+        title: 'Payment not verified', 
+        description: error.message, 
+        variant: 'destructive' 
+      });
     } finally {
       setIsVerifying(false);
     }
@@ -224,11 +216,13 @@ const Marketplace = () => {
 
         {!isLoading && filteredListings.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredListings.map((listing) => (
+            {filteredListings.map((listing) => {
+              const isOwnNFT = walletState.account?.accountId === listing.owner_account_id;
+              return (
               <div key={`${listing.token_id}-${listing.serial_number}`}>
                 <NFTCard
                   nft={listing}
-                  showActions={true}
+                  showActions={!isOwnNFT}
                   onBuy={() => handleBuy(listing)}
                 />
                 <div className="mt-2 text-center">
@@ -236,11 +230,12 @@ const Marketplace = () => {
                     {listing.price} HBAR
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Seller: {listing.seller.slice(0, 10)}...
+                    {isOwnNFT ? 'Your NFT' : `Seller: ${listing.owner_account_id.slice(0, 10)}...`}
                   </p>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -292,10 +287,10 @@ const Marketplace = () => {
               <div className="border-2 border-primary/20 bg-primary/5 p-4 rounded-lg">
                 <p className="text-sm font-semibold mb-2 text-foreground">Instructions:</p>
                 <ol className="text-sm space-y-1 list-decimal list-inside text-foreground">
-                  <li>Click "I Sent Payment" below</li>
                   <li>Open your HashPack wallet</li>
-                  <li>Send {paymentDialog.price} HBAR to the platform account above</li>
-                  <li>System will automatically verify and complete purchase</li>
+                  <li>Send exactly {paymentDialog.price} HBAR to the platform account above</li>
+                  <li>Wait 5 seconds for blockchain confirmation</li>
+                  <li>Click "Verify Payment" below for instant verification</li>
                 </ol>
               </div>
 
@@ -303,17 +298,17 @@ const Marketplace = () => {
                 <Button
                   variant="outline"
                   className="flex-1"
-                  onClick={() => setPaymentDialog(null)}
+                  onClick={() => { setPaymentDialog(null); setPaymentSent(false); }}
                   disabled={isVerifying}
                 >
                   Cancel
                 </Button>
                 <Button
                   className="flex-1"
-                  onClick={initiatePurchase}
+                  onClick={verifyPayment}
                   disabled={isVerifying}
                 >
-                  {isVerifying ? 'Waiting for payment...' : 'I Sent Payment'}
+                  {isVerifying ? 'Verifying...' : 'Verify Payment'}
                 </Button>
               </div>
             </div>

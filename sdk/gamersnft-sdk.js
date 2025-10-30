@@ -74,6 +74,51 @@ class GamersNFT {
       throw new Error(`Failed to fetch templates: ${error.message}`);
     }
   }
+
+  async mintDynamic(playerAccountId, nftDetails) {
+    if (!this.gameId) {
+      throw new Error('SDK not initialized. Call initialize() first.');
+    }
+
+    const { name, description, imageUrl, type, rarity, attributes } = nftDetails;
+
+    if (!name || !description || !imageUrl) {
+      throw new Error('Missing required fields: name, description, imageUrl');
+    }
+
+    try {
+      const response = await fetch(`${this.baseUrl}/api/v1/games/${this.gameId}/mint-dynamic`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          apiKey: this.apiKey,
+          playerAccountId,
+          name,
+          description,
+          imageUrl,
+          type,
+          rarity,
+          attributes
+        })
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Dynamic mint failed');
+      }
+
+      return {
+        success: true,
+        nftId: data.nftId,
+        serialNumber: data.serialNumber,
+        metadataCID: data.metadataCID,
+        metadata: data.metadata
+      };
+    } catch (error) {
+      throw new Error(`Failed to mint dynamic NFT: ${error.message}`);
+    }
+  }
 }
 
 if (typeof module !== 'undefined' && module.exports) {

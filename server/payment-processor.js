@@ -34,7 +34,7 @@ export async function processPendingPayments() {
       const forwardResult = await forwardPaymentToSeller(nft.owner_account_id, purchase.expected_amount, royaltyPercentage, developerAccountId);
       
       if (!forwardResult.success) {
-        db.prepare('UPDATE payment_logs SET status = "FORWARD_FAILED", error_message = ? WHERE id = ?')
+        db.prepare("UPDATE payment_logs SET status = 'FORWARD_FAILED', error_message = ? WHERE id = ?")
           .run(forwardResult.error, paymentLogId);
         updatePendingPurchaseStatus(purchase.id, 'FORWARD_FAILED');
         continue;
@@ -48,7 +48,7 @@ export async function processPendingPayments() {
       purchaseNFT(purchase.nft_id, purchase.buyer_account_id);
       
       // Mark as completed
-      db.prepare('UPDATE payment_logs SET status = "COMPLETED" WHERE id = ?').run(paymentLogId);
+      db.prepare("UPDATE payment_logs SET status = 'COMPLETED' WHERE id = ?").run(paymentLogId);
       updatePendingPurchaseStatus(purchase.id, 'COMPLETED');
       
       console.log(`✅ Purchase ${purchase.id} completed successfully`);

@@ -149,11 +149,32 @@ export const useWallet = () => {
     (hc as any).openPairingModal();
   };
 
-  const disconnectWallet = () => {
+  const disconnectWallet = async () => {
     const hc = hashConnect || globalHashConnect;
-    if (hc && walletState.topic) {
-      (hc as any).disconnect(walletState.topic);
+    if (hc) {
+      try {
+        // Disconnect all pairings
+        const pairings = (hc as any).pairingsData || [];
+        for (const pairing of pairings) {
+          await (hc as any).disconnect(pairing.topic);
+        }
+      } catch (error) {
+        console.error('Disconnect error:', error);
+      }
     }
+    
+    // Clear ALL HashConnect related storage
+    Object.keys(localStorage).forEach(key => {
+      if (key.includes('hashconnect') || key.includes('walletconnect') || key.includes('wc@2')) {
+        localStorage.removeItem(key);
+      }
+    });
+    
+    // Reset global state completely
+    globalHashConnect = null;
+    initStarted.current = false;
+    setHashConnect(null);
+    
     updateGlobalState(initialState);
   };
 

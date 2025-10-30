@@ -1,14 +1,16 @@
 {
-  "name": "hedera-nft-server",
+  "name": "hedera-gamers-vault-backend",
+  "version": "1.0.0",
   "type": "module",
+  "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "@hashgraph/sdk": "^2.75.0",
-    "better-sqlite3": "^12.4.1",
+    "@hashgraph/sdk": "^2.49.2",
+    "better-sqlite3": "^11.7.0",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^4.18.2"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
   }
 }

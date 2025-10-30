@@ -122,7 +122,7 @@ export function logPayment(nftId, buyerAccountId, sellerAccountId, amount, statu
 }
 
 export function getFailedPayments() {
-  return db.prepare('SELECT * FROM payment_logs WHERE status IN ("PAYMENT_RECEIVED", "FORWARD_FAILED") ORDER BY created_at DESC').all();
+  return db.prepare("SELECT * FROM payment_logs WHERE status IN ('PAYMENT_RECEIVED', 'FORWARD_FAILED') ORDER BY created_at DESC").all();
 }
 
 export function createPendingPurchase(nftId, buyerAccountId, expectedAmount) {
@@ -131,7 +131,7 @@ export function createPendingPurchase(nftId, buyerAccountId, expectedAmount) {
 }
 
 export function getPendingPurchases() {
-  return db.prepare('SELECT * FROM pending_purchases WHERE status = "PENDING" AND created_at > datetime("now", "-10 minutes") ORDER BY created_at ASC').all();
+  return db.prepare("SELECT * FROM pending_purchases WHERE status = 'PENDING' AND created_at > datetime('now', '-10 minutes') ORDER BY created_at ASC").all();
 }
 
 export function updatePendingPurchaseStatus(id, status) {
