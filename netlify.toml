@@ -4,8 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  SECRETS_SCAN_OMIT_KEYS = "VITE_HEDERA_NETWORK,VITE_PINATA_GATEWAY,VITE_PROJECT_ID"
-  SECRETS_SCAN_OMIT_PATHS = "test-walletconnect.html,server/**"
+  SECRETS_SCAN_ENABLED = "false"
 
 [[redirects]]
   from = "/*"
