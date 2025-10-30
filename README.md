@@ -66,7 +66,7 @@ VITE_PINATA_GATEWAY=your_gateway_url
 npm run dev
 ```
 
-Visit `http://localhost:8080`
+Visit `http://localhost:8080` (local) or `https://gamersnft.netlify.app` (live demo)
 
 ## Usage
 
@@ -193,9 +193,15 @@ npm run build
 
 MIT
 
+## Live Demo
+
+- **Frontend**: https://gamersnft.netlify.app
+- **Backend API**: https://gamersnft-backend.onrender.com
+- **Network**: Hedera Testnet
+
 ## Support
 
 For issues or questions:
-- GitHub Issues
+- GitHub Issues: https://github.com/Howards254/hedera-gamers-vault
 - Hedera Discord
 - Documentation: https://docs.hedera.com
