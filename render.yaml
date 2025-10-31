@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: gamersnft-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: VITE_MY_ACCOUNT_ID
+        sync: false
+      - key: VITE_MY_PRIVATE_KEY
+        sync: false
+      - key: VITE_APP_ID
+        value: Hedera Gamers Vault
+      - key: VITE_PROJECT_ID
+        sync: false
+      - key: VITE_HEDERA_NETWORK
+        value: testnet
+      - key: VITE_PINATA_JWT
+        sync: false
+      - key: VITE_PINATA_GATEWAY
+        value: gateway.pinata.cloud
+      - key: VITE_ADMIN_ACCOUNTS
+        sync: false
+      - key: VITE_BACKEND_URL
+        value: https://gamersnft-backend.onrender.com
