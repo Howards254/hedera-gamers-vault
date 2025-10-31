@@ -2,7 +2,7 @@
 
 Get your Hedera Gamers Vault NFT marketplace running locally in 5 minutes!
 
-**Already deployed?** Visit https://gamersnft.netlify.app to use the live version!
+**Already deployed?** Visit https://gamersnft.onrender.com to use the live version!
 
 ## Step 1: Install Dependencies (1 min)
 
@@ -101,14 +101,14 @@ Visit http://localhost:8080
 ## What's Next?
 
 ### Use the Live Site
-- Visit https://gamersnft.netlify.app
+- Visit https://gamersnft.onrender.com
 - Connect your HashPack wallet
 - Start minting and trading NFTs!
 
 ### Deploy Your Own
 - See `LIVE_DEPLOYMENT.md` for deployment guide
 - Backend: Render (free)
-- Frontend: Netlify (free)
+- Frontend: Render (free)
 
 ### For Game Developers
 - Register your game at `/developers`
