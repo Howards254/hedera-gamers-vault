@@ -28,6 +28,12 @@ A production-ready NFT marketplace for gaming collectibles built on Hedera Hashg
 - Automatic token association
 - Royalty fee distribution
 
+✅ **Phase 5 - Database & Persistence**
+- Turso cloud database (LibSQL)
+- Persistent data across deployments
+- Automatic backups
+- Global edge network
+
 ## Setup
 
 ### 1. Install Dependencies
@@ -58,6 +64,10 @@ VITE_ADMIN_ACCOUNTS=0.0.YOUR_ACCOUNT_ID
 
 # Backend URL (for local dev)
 VITE_BACKEND_URL=http://localhost:3001
+
+# Turso Database (for backend)
+TURSO_DATABASE_URL=your_turso_database_url
+TURSO_AUTH_TOKEN=your_turso_auth_token
 ```
 
 ### 3. Get Pinata Credentials
@@ -67,9 +77,25 @@ VITE_BACKEND_URL=http://localhost:3001
 3. Get your dedicated gateway URL
 4. Add both to `.env` file
 
-### 4. Run Development Server
+### 4. Setup Turso Database (Backend)
+
+1. Sign up at [Turso.tech](https://turso.tech)
+2. Create a new database
+3. Copy database URL and auth token
+4. Add to `server/.env` file
+
+### 5. Run Development Server
+
+**Frontend:**
 ```bash
 npm run dev
+```
+
+**Backend:**
+```bash
+cd server
+npm install
+npm start
 ```
 
 **Live Demo**: https://gamersnft.onrender.com  
@@ -114,9 +140,10 @@ npm run dev
 - **HashConnect v3** for wallet integration
 - **@hashgraph/sdk** for blockchain interactions
 
-### Storage
+### Storage & Database
 - **Pinata** for IPFS file storage
 - **HIP-412** compliant metadata standard
+- **Turso** for persistent cloud database (LibSQL/SQLite-compatible)
 
 ## Project Structure
 
@@ -161,16 +188,27 @@ src/
 npm run build
 ```
 
-### Deploy to Vercel/Netlify
-1. Connect your Git repository
-2. Set environment variables in dashboard
-3. Deploy
+### Deploy to Render
+
+**Frontend (Static Site):**
+1. Connect Git repository
+2. Build command: `npm run build`
+3. Publish directory: `dist`
+4. Add environment variables
+
+**Backend (Web Service):**
+1. Connect Git repository
+2. Root directory: `server`
+3. Build command: `npm install`
+4. Start command: `npm start`
+5. Add environment variables (including Turso credentials)
 
 ### Important Notes
 - Never commit `.env` file
 - Use environment variables for all secrets
 - Test on Hedera Testnet before mainnet
 - Ensure Pinata has sufficient storage
+- Turso database persists data across deployments
 
 ## Troubleshooting
 
@@ -195,6 +233,8 @@ npm run build
 - All transactions signed by user's wallet
 - IPFS ensures immutable metadata
 - Royalty fees enforced on-chain
+- Database credentials stored securely in environment variables
+- Turso provides automatic backups and point-in-time recovery
 
 ## License
 
@@ -204,6 +244,7 @@ MIT
 
 - **Frontend**: https://gamersnft.onrender.com
 - **Backend API**: https://gamersnft-backend.onrender.com
+- **Database**: Turso Cloud (LibSQL)
 - **Network**: Hedera Testnet
 - **Status**: ✅ Production Ready
 
