@@ -5,83 +5,81 @@ const db = createClient({
   authToken: process.env.TURSO_AUTH_TOKEN
 });
 
-await db.execute(`
-  CREATE TABLE IF NOT EXISTS games (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    description TEXT,
-    developer_account_id TEXT NOT NULL,
-    api_key TEXT UNIQUE NOT NULL,
-    token_id TEXT,
-    royalty_percentage REAL DEFAULT 5.0,
-    logo_url TEXT,
-    website_url TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
+await db.execute(`CREATE TABLE IF NOT EXISTS games (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  description TEXT,
+  developer_account_id TEXT NOT NULL,
+  api_key TEXT UNIQUE NOT NULL,
+  token_id TEXT,
+  royalty_percentage REAL DEFAULT 5.0,
+  logo_url TEXT,
+  website_url TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)`);
 
-  CREATE TABLE IF NOT EXISTS nft_templates (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    game_id INTEGER NOT NULL,
-    template_id TEXT NOT NULL,
-    name TEXT NOT NULL,
-    description TEXT,
-    image_url TEXT,
-    type TEXT,
-    rarity TEXT,
-    attributes TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (game_id) REFERENCES games(id),
-    UNIQUE(game_id, template_id)
-  );
+await db.execute(`CREATE TABLE IF NOT EXISTS nft_templates (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  game_id INTEGER NOT NULL,
+  template_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT,
+  image_url TEXT,
+  type TEXT,
+  rarity TEXT,
+  attributes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (game_id) REFERENCES games(id),
+  UNIQUE(game_id, template_id)
+)`);
 
-  CREATE TABLE IF NOT EXISTS nfts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    token_id TEXT NOT NULL,
-    serial_number INTEGER NOT NULL,
-    owner_account_id TEXT NOT NULL,
-    metadata_cid TEXT NOT NULL,
-    game_id INTEGER,
-    template_id TEXT,
-    listed_for_sale INTEGER DEFAULT 0,
-    price REAL DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (game_id) REFERENCES games(id)
-  );
+await db.execute(`CREATE TABLE IF NOT EXISTS nfts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  token_id TEXT NOT NULL,
+  serial_number INTEGER NOT NULL,
+  owner_account_id TEXT NOT NULL,
+  metadata_cid TEXT NOT NULL,
+  game_id INTEGER,
+  template_id TEXT,
+  listed_for_sale INTEGER DEFAULT 0,
+  price REAL DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (game_id) REFERENCES games(id)
+)`);
 
-  CREATE TABLE IF NOT EXISTS transactions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nft_id INTEGER NOT NULL,
-    from_account TEXT NOT NULL,
-    to_account TEXT NOT NULL,
-    price REAL NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (nft_id) REFERENCES nfts(id)
-  );
+await db.execute(`CREATE TABLE IF NOT EXISTS transactions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nft_id INTEGER NOT NULL,
+  from_account TEXT NOT NULL,
+  to_account TEXT NOT NULL,
+  price REAL NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (nft_id) REFERENCES nfts(id)
+)`);
 
-  CREATE TABLE IF NOT EXISTS payment_logs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nft_id INTEGER NOT NULL,
-    buyer_account_id TEXT NOT NULL,
-    seller_account_id TEXT NOT NULL,
-    amount REAL NOT NULL,
-    status TEXT NOT NULL,
-    payment_tx_id TEXT,
-    forward_tx_id TEXT,
-    error_message TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (nft_id) REFERENCES nfts(id)
-  );
+await db.execute(`CREATE TABLE IF NOT EXISTS payment_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nft_id INTEGER NOT NULL,
+  buyer_account_id TEXT NOT NULL,
+  seller_account_id TEXT NOT NULL,
+  amount REAL NOT NULL,
+  status TEXT NOT NULL,
+  payment_tx_id TEXT,
+  forward_tx_id TEXT,
+  error_message TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (nft_id) REFERENCES nfts(id)
+)`);
 
-  CREATE TABLE IF NOT EXISTS pending_purchases (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nft_id INTEGER NOT NULL,
-    buyer_account_id TEXT NOT NULL,
-    expected_amount REAL NOT NULL,
-    status TEXT DEFAULT 'PENDING',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (nft_id) REFERENCES nfts(id)
-  );
-`);
+await db.execute(`CREATE TABLE IF NOT EXISTS pending_purchases (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nft_id INTEGER NOT NULL,
+  buyer_account_id TEXT NOT NULL,
+  expected_amount REAL NOT NULL,
+  status TEXT DEFAULT 'PENDING',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (nft_id) REFERENCES nfts(id)
+)`);
 
 export async function createNFTRecord(tokenId, serialNumber, ownerAccountId, metadataCID) {
   const result = await db.execute({
