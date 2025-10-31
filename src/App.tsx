@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import MyCollectibles from "./pages/MyCollectibles";
 import MintNFT from "./pages/MintNFT";
+import DevelopersLanding from "./pages/DevelopersLanding";
 import DeveloperDashboard from "./pages/DeveloperDashboard";
 import AdminPayments from "./pages/AdminPayments";
 import Documentation from "./pages/Documentation";
@@ -27,7 +28,8 @@ const App = () => (
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/my-collectibles" element={<MyCollectibles />} />
             <Route path="/mint" element={<MintNFT />} />
-            <Route path="/developers" element={<DeveloperDashboard />} />
+            <Route path="/developers" element={<DevelopersLanding />} />
+            <Route path="/developer-dashboard" element={<DeveloperDashboard />} />
             <Route path="/docs" element={<Documentation />} />
             <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="*" element={<NotFound />} />
