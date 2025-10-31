@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { useWallet } from "@/hooks/useWallet";
 import { useNavigate } from "react-router-dom";
 import { Gamepad2, Zap, Shield, Code, Coins, Users } from "lucide-react";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 export default function DevelopersLanding() {
   const { accountId, connectWallet } = useWallet();
@@ -19,6 +21,7 @@ export default function DevelopersLanding() {
 
   return (
     <div className="min-h-screen">
+      <Navigation />
       {/* Hero Section */}
       <section className="py-20 px-4 text-center bg-gradient-to-b from-primary/10 to-background">
         <div className="max-w-4xl mx-auto">
@@ -187,6 +190,8 @@ export default function DevelopersLanding() {
           </Button>
         </div>
       </section>
+      
+      <Footer />
     </div>
   );
 }
