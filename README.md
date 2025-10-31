@@ -72,7 +72,7 @@ VITE_BACKEND_URL=http://localhost:3001
 npm run dev
 ```
 
-**Live Demo**: https://gamersnft.netlify.app  
+**Live Demo**: https://gamersnft.onrender.com  
 **Local Development**: http://localhost:8080
 
 ## Usage
@@ -202,7 +202,7 @@ MIT
 
 ## 🌐 Live Demo
 
-- **Frontend**: https://gamersnft.netlify.app
+- **Frontend**: https://gamersnft.onrender.com
 - **Backend API**: https://gamersnft-backend.onrender.com
 - **Network**: Hedera Testnet
 - **Status**: ✅ Production Ready
