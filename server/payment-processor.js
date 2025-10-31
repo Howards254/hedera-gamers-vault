@@ -3,13 +3,14 @@ import { verifyPayment, forwardPaymentToSeller } from './payment-verification.js
 import db from './database.js';
 
 export async function processPendingPayments() {
-  const pending = getPendingPurchases();
+  const pending = await getPendingPurchases();
   
   for (const purchase of pending) {
     try {
-      const nft = getListedNFTs().find(n => n.id === purchase.nft_id);
+      const nfts = await getListedNFTs();
+      const nft = nfts.find(n => n.id === purchase.nft_id);
       if (!nft) {
-        updatePendingPurchaseStatus(purchase.id, 'NFT_NOT_FOUND');
+        await updatePendingPurchaseStatus(purchase.id, 'NFT_NOT_FOUND');
         continue;
       }
 
@@ -23,10 +24,11 @@ export async function processPendingPayments() {
       console.log(`✅ Payment verified for purchase ${purchase.id}`);
       
       // Log payment received
-      const paymentLogId = logPayment(purchase.nft_id, purchase.buyer_account_id, nft.owner_account_id, purchase.expected_amount, 'PAYMENT_RECEIVED', verification.transactionId);
+      const paymentLogId = await logPayment(purchase.nft_id, purchase.buyer_account_id, nft.owner_account_id, purchase.expected_amount, 'PAYMENT_RECEIVED', verification.transactionId);
       
       // Get game info for royalty
-      const game = db.prepare('SELECT * FROM games WHERE id = ?').get(nft.game_id);
+      const gameResult = await db.execute({ sql: 'SELECT * FROM games WHERE id = ?', args: [nft.game_id] });
+      const game = gameResult.rows[0];
       const royaltyPercentage = game?.royalty_percentage || 0;
       const developerAccountId = game?.developer_account_id;
       
@@ -34,28 +36,32 @@ export async function processPendingPayments() {
       const forwardResult = await forwardPaymentToSeller(nft.owner_account_id, purchase.expected_amount, royaltyPercentage, developerAccountId);
       
       if (!forwardResult.success) {
-        db.prepare("UPDATE payment_logs SET status = 'FORWARD_FAILED', error_message = ? WHERE id = ?")
-          .run(forwardResult.error, paymentLogId);
-        updatePendingPurchaseStatus(purchase.id, 'FORWARD_FAILED');
+        await db.execute({
+          sql: "UPDATE payment_logs SET status = 'FORWARD_FAILED', error_message = ? WHERE id = ?",
+          args: [forwardResult.error, paymentLogId]
+        });
+        await updatePendingPurchaseStatus(purchase.id, 'FORWARD_FAILED');
         continue;
       }
       
       // Update log with forward transaction
-      db.prepare('UPDATE payment_logs SET forward_tx_id = ? WHERE id = ?')
-        .run(forwardResult.transactionId, paymentLogId);
+      await db.execute({
+        sql: 'UPDATE payment_logs SET forward_tx_id = ? WHERE id = ?',
+        args: [forwardResult.transactionId, paymentLogId]
+      });
       
       // Transfer ownership
-      purchaseNFT(purchase.nft_id, purchase.buyer_account_id);
+      await purchaseNFT(purchase.nft_id, purchase.buyer_account_id);
       
       // Mark as completed
-      db.prepare("UPDATE payment_logs SET status = 'COMPLETED' WHERE id = ?").run(paymentLogId);
-      updatePendingPurchaseStatus(purchase.id, 'COMPLETED');
+      await db.execute({ sql: "UPDATE payment_logs SET status = 'COMPLETED' WHERE id = ?", args: [paymentLogId] });
+      await updatePendingPurchaseStatus(purchase.id, 'COMPLETED');
       
       console.log(`✅ Purchase ${purchase.id} completed successfully`);
       
     } catch (error) {
       console.error(`Error processing purchase ${purchase.id}:`, error);
-      updatePendingPurchaseStatus(purchase.id, 'ERROR');
+      await updatePendingPurchaseStatus(purchase.id, 'ERROR');
     }
   }
 }

@@ -51,7 +51,7 @@ app.post('/api/mint-nft', async (req, res) => {
   try {
     const { tokenId, metadataCID, recipientAccountId } = req.body;
     const serialNumber = await mintNFT(tokenId, metadataCID, recipientAccountId);
-    createNFTRecord(tokenId, serialNumber, recipientAccountId, metadataCID);
+    await createNFTRecord(tokenId, serialNumber, recipientAccountId, metadataCID);
     res.json({ serialNumber });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -61,7 +61,7 @@ app.post('/api/mint-nft', async (req, res) => {
 app.get('/api/my-nfts/:accountId', async (req, res) => {
   try {
     const { accountId } = req.params;
-    const nfts = getNFTsByOwner(accountId);
+    const nfts = await getNFTsByOwner(accountId);
     res.json({ nfts });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -71,7 +71,7 @@ app.get('/api/my-nfts/:accountId', async (req, res) => {
 app.post('/api/list-nft', async (req, res) => {
   try {
     const { nftId, price, ownerAccountId } = req.body;
-    listNFTForSale(nftId, price, ownerAccountId);
+    await listNFTForSale(nftId, price, ownerAccountId);
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -80,7 +80,7 @@ app.post('/api/list-nft', async (req, res) => {
 
 app.get('/api/marketplace', async (req, res) => {
   try {
-    const nfts = getListedNFTs();
+    const nfts = await getListedNFTs();
     res.json({ nfts });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -93,7 +93,8 @@ app.post('/api/verify-and-purchase', async (req, res) => {
     const { nftId, buyerAccountId } = req.body;
     
     // Get NFT details to verify payment
-    const nft = getListedNFTs().find(n => n.id === nftId);
+    const nfts = await getListedNFTs();
+    const nft = nfts.find(n => n.id === nftId);
     if (!nft) {
       return res.status(404).json({ error: 'NFT not found' });
     }
@@ -104,21 +105,22 @@ app.post('/api/verify-and-purchase', async (req, res) => {
     }
     
     // Create pending purchase for background processor safety net
-    const purchaseId = createPendingPurchase(nftId, buyerAccountId, nft.price);
+    const purchaseId = await createPendingPurchase(nftId, buyerAccountId, nft.price);
     
     // Verify payment on blockchain immediately
     const verification = await verifyPayment(buyerAccountId, nft.owner_account_id, nft.price);
     
     if (!verification.verified) {
-      logPayment(nftId, buyerAccountId, nft.owner_account_id, nft.price, 'VERIFICATION_FAILED', null, null, 'Payment not found on blockchain');
+      await logPayment(nftId, buyerAccountId, nft.owner_account_id, nft.price, 'VERIFICATION_FAILED', null, null, 'Payment not found on blockchain');
       return res.status(400).json({ error: 'Payment not found. Please wait 5 seconds after sending, then try again.' });
     }
     
     // Log payment received
-    paymentLogId = logPayment(nftId, buyerAccountId, nft.owner_account_id, nft.price, 'PAYMENT_RECEIVED', verification.transactionId);
+    paymentLogId = await logPayment(nftId, buyerAccountId, nft.owner_account_id, nft.price, 'PAYMENT_RECEIVED', verification.transactionId);
     
     // Get game info for royalty
-    const game = db.prepare('SELECT * FROM games WHERE id = ?').get(nft.game_id);
+    const gameResult = await db.execute({ sql: 'SELECT * FROM games WHERE id = ?', args: [nft.game_id] });
+    const game = gameResult.rows[0];
     const royaltyPercentage = game?.royalty_percentage || 0;
     const developerAccountId = game?.developer_account_id;
     
@@ -126,21 +128,25 @@ app.post('/api/verify-and-purchase', async (req, res) => {
     const forwardResult = await forwardPaymentToSeller(nft.owner_account_id, nft.price, royaltyPercentage, developerAccountId);
     
     if (!forwardResult.success) {
-      db.prepare("UPDATE payment_logs SET status = 'FORWARD_FAILED', error_message = ? WHERE id = ?")
-        .run(forwardResult.error, paymentLogId);
+      await db.execute({
+        sql: "UPDATE payment_logs SET status = 'FORWARD_FAILED', error_message = ? WHERE id = ?",
+        args: [forwardResult.error, paymentLogId]
+      });
       return res.status(500).json({ error: 'Payment verified but failed to forward to seller. Support will refund you.' });
     }
     
     // Update log with forward transaction
-    db.prepare('UPDATE payment_logs SET forward_tx_id = ? WHERE id = ?')
-      .run(forwardResult.transactionId, paymentLogId);
+    await db.execute({
+      sql: 'UPDATE payment_logs SET forward_tx_id = ? WHERE id = ?',
+      args: [forwardResult.transactionId, paymentLogId]
+    });
     
     // Transfer ownership
-    const { seller, price } = purchaseNFT(nftId, buyerAccountId);
+    const { seller, price } = await purchaseNFT(nftId, buyerAccountId);
     
     // Mark as completed
-    db.prepare("UPDATE payment_logs SET status = 'COMPLETED' WHERE id = ?").run(paymentLogId);
-    db.prepare("UPDATE pending_purchases SET status = 'COMPLETED' WHERE id = ?").run(purchaseId);
+    await db.execute({ sql: "UPDATE payment_logs SET status = 'COMPLETED' WHERE id = ?", args: [paymentLogId] });
+    await db.execute({ sql: "UPDATE pending_purchases SET status = 'COMPLETED' WHERE id = ?", args: [purchaseId] });
     
     res.json({ 
       success: true, 
@@ -152,8 +158,10 @@ app.post('/api/verify-and-purchase', async (req, res) => {
     });
   } catch (error) {
     if (paymentLogId) {
-      db.prepare("UPDATE payment_logs SET status = 'ERROR', error_message = ? WHERE id = ?")
-        .run(error.message, paymentLogId);
+      await db.execute({
+        sql: "UPDATE payment_logs SET status = 'ERROR', error_message = ? WHERE id = ?",
+        args: [error.message, paymentLogId]
+      });
     }
     console.error('Purchase error:', error);
     res.status(500).json({ error: 'Purchase failed. If you sent payment, it will be processed automatically.' });
@@ -162,7 +170,7 @@ app.post('/api/verify-and-purchase', async (req, res) => {
 
 app.get('/api/admin/failed-payments', async (req, res) => {
   try {
-    const failedPayments = getFailedPayments();
+    const failedPayments = await getFailedPayments();
     res.json({ payments: failedPayments });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -173,7 +181,7 @@ app.get('/api/admin/failed-payments', async (req, res) => {
 app.post('/api/v1/games/register', async (req, res) => {
   try {
     const { name, description, developerAccountId, royaltyPercentage, logoUrl, websiteUrl } = req.body;
-    const result = registerGame(name, description, developerAccountId, royaltyPercentage, logoUrl, websiteUrl);
+    const result = await registerGame(name, description, developerAccountId, royaltyPercentage, logoUrl, websiteUrl);
     res.json({ success: true, ...result });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -182,7 +190,7 @@ app.post('/api/v1/games/register', async (req, res) => {
 
 app.get('/api/v1/games', async (req, res) => {
   try {
-    const games = getAllGames();
+    const games = await getAllGames();
     res.json({ games });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -192,7 +200,7 @@ app.get('/api/v1/games', async (req, res) => {
 app.get('/api/v1/games/my-games/:developerAccountId', async (req, res) => {
   try {
     const { developerAccountId } = req.params;
-    const games = getGamesByDeveloper(developerAccountId);
+    const games = await getGamesByDeveloper(developerAccountId);
     res.json({ games });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -204,7 +212,7 @@ app.post('/api/v1/games/:gameId/templates', async (req, res) => {
     const { gameId } = req.params;
     const { apiKey, name, description, imageUrl, type, rarity, attributes } = req.body;
     
-    const game = getGameByApiKey(apiKey);
+    const game = await getGameByApiKey(apiKey);
     if (!game || game.id !== parseInt(gameId)) {
       return res.status(401).json({ error: 'Invalid API key' });
     }
@@ -212,7 +220,7 @@ app.post('/api/v1/games/:gameId/templates', async (req, res) => {
     // Auto-generate template ID from name
     const templateId = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
     
-    const id = createTemplate(gameId, templateId, name, description, imageUrl, type, rarity, attributes);
+    const id = await createTemplate(gameId, templateId, name, description, imageUrl, type, rarity, attributes);
     res.json({ success: true, templateId });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -222,7 +230,7 @@ app.post('/api/v1/games/:gameId/templates', async (req, res) => {
 app.get('/api/v1/games/:gameId/templates', async (req, res) => {
   try {
     const { gameId } = req.params;
-    const templates = getTemplatesByGame(gameId);
+    const templates = await getTemplatesByGame(gameId);
     res.json({ templates });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -234,12 +242,12 @@ app.post('/api/v1/games/:gameId/mint', async (req, res) => {
     const { gameId } = req.params;
     const { apiKey, playerAccountId, templateId, metadata } = req.body;
     
-    const game = getGameByApiKey(apiKey);
+    const game = await getGameByApiKey(apiKey);
     if (!game || game.id !== parseInt(gameId)) {
       return res.status(401).json({ error: 'Invalid API key' });
     }
     
-    const template = getTemplate(gameId, templateId);
+    const template = await getTemplate(gameId, templateId);
     if (!template) {
       return res.status(404).json({ error: 'Template not found' });
     }
@@ -268,11 +276,11 @@ app.post('/api/v1/games/:gameId/mint', async (req, res) => {
     let tokenId = game.token_id;
     if (!tokenId) {
       tokenId = await createNFTCollection(game.name, game.name.substring(0, 4).toUpperCase());
-      updateGameTokenId(game.id, tokenId);
+      await updateGameTokenId(game.id, tokenId);
     }
     
     const serialNumber = await mintNFT(tokenId, metadataCID, playerAccountId);
-    const nftId = createNFTRecord(tokenId, serialNumber, playerAccountId, metadataCID);
+    const nftId = await createNFTRecord(tokenId, serialNumber, playerAccountId, metadataCID);
     
     res.json({ 
       success: true, 
@@ -290,7 +298,7 @@ app.post('/api/v1/games/:gameId/mint-dynamic', async (req, res) => {
     const { gameId } = req.params;
     const { apiKey, playerAccountId, name, description, imageUrl, type, rarity, attributes } = req.body;
     
-    const game = getGameByApiKey(apiKey);
+    const game = await getGameByApiKey(apiKey);
     if (!game || game.id !== parseInt(gameId)) {
       return res.status(401).json({ error: 'Invalid API key' });
     }
@@ -325,11 +333,11 @@ app.post('/api/v1/games/:gameId/mint-dynamic', async (req, res) => {
     let tokenId = game.token_id;
     if (!tokenId) {
       tokenId = await createNFTCollection(game.name, game.name.substring(0, 4).toUpperCase());
-      updateGameTokenId(game.id, tokenId);
+      await updateGameTokenId(game.id, tokenId);
     }
     
     const serialNumber = await mintNFT(tokenId, metadataCID, playerAccountId);
-    const nftId = createNFTRecord(tokenId, serialNumber, playerAccountId, metadataCID);
+    const nftId = await createNFTRecord(tokenId, serialNumber, playerAccountId, metadataCID);
     
     res.json({ 
       success: true, 

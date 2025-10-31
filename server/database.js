@@ -1,13 +1,11 @@
-import Database from 'better-sqlite3';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { createClient } from '@libsql/client';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const db = createClient({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN
+});
 
-const db = new Database(path.join(__dirname, 'marketplace.db'));
-
-db.exec(`
+await db.execute(`
   CREATE TABLE IF NOT EXISTS games (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -85,103 +83,152 @@ db.exec(`
   );
 `);
 
-export function createNFTRecord(tokenId, serialNumber, ownerAccountId, metadataCID) {
-  const stmt = db.prepare('INSERT INTO nfts (token_id, serial_number, owner_account_id, metadata_cid) VALUES (?, ?, ?, ?)');
-  return stmt.run(tokenId, serialNumber, ownerAccountId, metadataCID).lastInsertRowid;
+export async function createNFTRecord(tokenId, serialNumber, ownerAccountId, metadataCID) {
+  const result = await db.execute({
+    sql: 'INSERT INTO nfts (token_id, serial_number, owner_account_id, metadata_cid) VALUES (?, ?, ?, ?)',
+    args: [tokenId, serialNumber, ownerAccountId, metadataCID]
+  });
+  return result.lastInsertRowid;
 }
 
-export function getNFTsByOwner(ownerAccountId) {
-  const stmt = db.prepare('SELECT * FROM nfts WHERE owner_account_id = ? ORDER BY created_at DESC');
-  return stmt.all(ownerAccountId);
+export async function getNFTsByOwner(ownerAccountId) {
+  const result = await db.execute({
+    sql: 'SELECT * FROM nfts WHERE owner_account_id = ? ORDER BY created_at DESC',
+    args: [ownerAccountId]
+  });
+  return result.rows;
 }
 
-export function listNFTForSale(nftId, price, ownerAccountId) {
-  const stmt = db.prepare('UPDATE nfts SET listed_for_sale = 1, price = ? WHERE id = ? AND owner_account_id = ?');
-  return stmt.run(price, nftId, ownerAccountId);
+export async function listNFTForSale(nftId, price, ownerAccountId) {
+  await db.execute({
+    sql: 'UPDATE nfts SET listed_for_sale = 1, price = ? WHERE id = ? AND owner_account_id = ?',
+    args: [price, nftId, ownerAccountId]
+  });
 }
 
-export function getListedNFTs() {
-  const stmt = db.prepare('SELECT * FROM nfts WHERE listed_for_sale = 1 ORDER BY created_at DESC');
-  return stmt.all();
+export async function getListedNFTs() {
+  const result = await db.execute('SELECT * FROM nfts WHERE listed_for_sale = 1 ORDER BY created_at DESC');
+  return result.rows;
 }
 
-export function purchaseNFT(nftId, buyerAccountId) {
-  const nft = db.prepare('SELECT * FROM nfts WHERE id = ?').get(nftId);
+export async function purchaseNFT(nftId, buyerAccountId) {
+  const result = await db.execute({
+    sql: 'SELECT * FROM nfts WHERE id = ?',
+    args: [nftId]
+  });
+  const nft = result.rows[0];
   
   if (!nft || !nft.listed_for_sale) {
     throw new Error('NFT not available for purchase');
   }
 
-  db.prepare('UPDATE nfts SET owner_account_id = ?, listed_for_sale = 0, price = 0 WHERE id = ?')
-    .run(buyerAccountId, nftId);
+  await db.execute({
+    sql: 'UPDATE nfts SET owner_account_id = ?, listed_for_sale = 0, price = 0 WHERE id = ?',
+    args: [buyerAccountId, nftId]
+  });
 
-  db.prepare('INSERT INTO transactions (nft_id, from_account, to_account, price) VALUES (?, ?, ?, ?)')
-    .run(nftId, nft.owner_account_id, buyerAccountId, nft.price);
+  await db.execute({
+    sql: 'INSERT INTO transactions (nft_id, from_account, to_account, price) VALUES (?, ?, ?, ?)',
+    args: [nftId, nft.owner_account_id, buyerAccountId, nft.price]
+  });
 
   return { seller: nft.owner_account_id, price: nft.price };
 }
 
-export function logPayment(nftId, buyerAccountId, sellerAccountId, amount, status, paymentTxId = null, forwardTxId = null, errorMessage = null) {
-  const stmt = db.prepare('INSERT INTO payment_logs (nft_id, buyer_account_id, seller_account_id, amount, status, payment_tx_id, forward_tx_id, error_message) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-  return stmt.run(nftId, buyerAccountId, sellerAccountId, amount, status, paymentTxId, forwardTxId, errorMessage).lastInsertRowid;
-}
-
-export function getFailedPayments() {
-  return db.prepare("SELECT * FROM payment_logs WHERE status IN ('PAYMENT_RECEIVED', 'FORWARD_FAILED') ORDER BY created_at DESC").all();
-}
-
-export function createPendingPurchase(nftId, buyerAccountId, expectedAmount) {
-  const stmt = db.prepare('INSERT INTO pending_purchases (nft_id, buyer_account_id, expected_amount) VALUES (?, ?, ?)');
-  return stmt.run(nftId, buyerAccountId, expectedAmount).lastInsertRowid;
-}
-
-export function getPendingPurchases() {
-  return db.prepare("SELECT * FROM pending_purchases WHERE status = 'PENDING' AND created_at > datetime('now', '-10 minutes') ORDER BY created_at ASC").all();
-}
-
-export function updatePendingPurchaseStatus(id, status) {
-  db.prepare('UPDATE pending_purchases SET status = ? WHERE id = ?').run(status, id);
-}
-
-// Game functions
-export function registerGame(name, description, developerAccountId, royaltyPercentage, logoUrl, websiteUrl) {
-  const apiKey = 'gn_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  const stmt = db.prepare('INSERT INTO games (name, description, developer_account_id, api_key, royalty_percentage, logo_url, website_url) VALUES (?, ?, ?, ?, ?, ?, ?)');
-  const result = stmt.run(name, description, developerAccountId, apiKey, royaltyPercentage || 5.0, logoUrl, websiteUrl);
-  return { gameId: result.lastInsertRowid, apiKey };
-}
-
-export function updateGameTokenId(gameId, tokenId) {
-  const stmt = db.prepare('UPDATE games SET token_id = ? WHERE id = ?');
-  stmt.run(tokenId, gameId);
-}
-
-export function getGameByApiKey(apiKey) {
-  return db.prepare('SELECT * FROM games WHERE api_key = ?').get(apiKey);
-}
-
-export function getGamesByDeveloper(developerAccountId) {
-  return db.prepare('SELECT * FROM games WHERE developer_account_id = ? ORDER BY created_at DESC').all(developerAccountId);
-}
-
-export function getAllGames() {
-  return db.prepare('SELECT * FROM games ORDER BY created_at DESC').all();
-}
-
-// Template functions
-export function createTemplate(gameId, templateId, name, description, imageUrl, type, rarity, attributes) {
-  const stmt = db.prepare('INSERT INTO nft_templates (game_id, template_id, name, description, image_url, type, rarity, attributes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-  const result = stmt.run(gameId, templateId, name, description, imageUrl, type, rarity, JSON.stringify(attributes));
+export async function logPayment(nftId, buyerAccountId, sellerAccountId, amount, status, paymentTxId = null, forwardTxId = null, errorMessage = null) {
+  const result = await db.execute({
+    sql: 'INSERT INTO payment_logs (nft_id, buyer_account_id, seller_account_id, amount, status, payment_tx_id, forward_tx_id, error_message) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    args: [nftId, buyerAccountId, sellerAccountId, amount, status, paymentTxId, forwardTxId, errorMessage]
+  });
   return result.lastInsertRowid;
 }
 
-export function getTemplatesByGame(gameId) {
-  const templates = db.prepare('SELECT * FROM nft_templates WHERE game_id = ? ORDER BY created_at DESC').all(gameId);
-  return templates.map(t => ({ ...t, attributes: JSON.parse(t.attributes || '{}') }));
+export async function getFailedPayments() {
+  const result = await db.execute("SELECT * FROM payment_logs WHERE status IN ('PAYMENT_RECEIVED', 'FORWARD_FAILED') ORDER BY created_at DESC");
+  return result.rows;
 }
 
-export function getTemplate(gameId, templateId) {
-  const template = db.prepare('SELECT * FROM nft_templates WHERE game_id = ? AND template_id = ?').get(gameId, templateId);
+export async function createPendingPurchase(nftId, buyerAccountId, expectedAmount) {
+  const result = await db.execute({
+    sql: 'INSERT INTO pending_purchases (nft_id, buyer_account_id, expected_amount) VALUES (?, ?, ?)',
+    args: [nftId, buyerAccountId, expectedAmount]
+  });
+  return result.lastInsertRowid;
+}
+
+export async function getPendingPurchases() {
+  const result = await db.execute("SELECT * FROM pending_purchases WHERE status = 'PENDING' AND created_at > datetime('now', '-10 minutes') ORDER BY created_at ASC");
+  return result.rows;
+}
+
+export async function updatePendingPurchaseStatus(id, status) {
+  await db.execute({
+    sql: 'UPDATE pending_purchases SET status = ? WHERE id = ?',
+    args: [status, id]
+  });
+}
+
+// Game functions
+export async function registerGame(name, description, developerAccountId, royaltyPercentage, logoUrl, websiteUrl) {
+  const apiKey = 'gn_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  const result = await db.execute({
+    sql: 'INSERT INTO games (name, description, developer_account_id, api_key, royalty_percentage, logo_url, website_url) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    args: [name, description, developerAccountId, apiKey, royaltyPercentage || 5.0, logoUrl, websiteUrl]
+  });
+  return { gameId: result.lastInsertRowid, apiKey };
+}
+
+export async function updateGameTokenId(gameId, tokenId) {
+  await db.execute({
+    sql: 'UPDATE games SET token_id = ? WHERE id = ?',
+    args: [tokenId, gameId]
+  });
+}
+
+export async function getGameByApiKey(apiKey) {
+  const result = await db.execute({
+    sql: 'SELECT * FROM games WHERE api_key = ?',
+    args: [apiKey]
+  });
+  return result.rows[0];
+}
+
+export async function getGamesByDeveloper(developerAccountId) {
+  const result = await db.execute({
+    sql: 'SELECT * FROM games WHERE developer_account_id = ? ORDER BY created_at DESC',
+    args: [developerAccountId]
+  });
+  return result.rows;
+}
+
+export async function getAllGames() {
+  const result = await db.execute('SELECT * FROM games ORDER BY created_at DESC');
+  return result.rows;
+}
+
+// Template functions
+export async function createTemplate(gameId, templateId, name, description, imageUrl, type, rarity, attributes) {
+  const result = await db.execute({
+    sql: 'INSERT INTO nft_templates (game_id, template_id, name, description, image_url, type, rarity, attributes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    args: [gameId, templateId, name, description, imageUrl, type, rarity, JSON.stringify(attributes)]
+  });
+  return result.lastInsertRowid;
+}
+
+export async function getTemplatesByGame(gameId) {
+  const result = await db.execute({
+    sql: 'SELECT * FROM nft_templates WHERE game_id = ? ORDER BY created_at DESC',
+    args: [gameId]
+  });
+  return result.rows.map(t => ({ ...t, attributes: JSON.parse(t.attributes || '{}') }));
+}
+
+export async function getTemplate(gameId, templateId) {
+  const result = await db.execute({
+    sql: 'SELECT * FROM nft_templates WHERE game_id = ? AND template_id = ?',
+    args: [gameId, templateId]
+  });
+  const template = result.rows[0];
   if (template) template.attributes = JSON.parse(template.attributes || '{}');
   return template;
 }

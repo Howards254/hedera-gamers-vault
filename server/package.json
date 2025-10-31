@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@hashgraph/sdk": "^2.49.2",
+    "@libsql/client": "^0.15.15",
     "better-sqlite3": "^11.7.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
