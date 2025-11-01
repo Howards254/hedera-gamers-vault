@@ -80,6 +80,14 @@ export const Navigation = () => {
                   Blog
                 </Button>
               </Link>
+              <Link to="/faq">
+                <Button
+                  variant={isActive('/faq') ? 'default' : 'ghost'}
+                  className="font-medium"
+                >
+                  FAQ
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -180,6 +188,14 @@ export const Navigation = () => {
                   className="w-full justify-start font-medium"
                 >
                   Blog
+                </Button>
+              </Link>
+              <Link to="/faq" onClick={() => setMobileMenuOpen(false)}>
+                <Button
+                  variant={isActive('/faq') ? 'default' : 'ghost'}
+                  className="w-full justify-start font-medium"
+                >
+                  FAQ
                 </Button>
               </Link>
 

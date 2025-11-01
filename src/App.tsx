@@ -15,6 +15,7 @@ import Documentation from "./pages/Documentation";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/introducing-gamersnft" element={<BlogPost />} />
+            <Route path="/faq" element={<FAQ />} />
             <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
