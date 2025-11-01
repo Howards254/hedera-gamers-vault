@@ -263,6 +263,16 @@ Integrate NFT rewards into your game:
 - Built complete NFT marketplace with gaming integration
 - Expertise in React, TypeScript, Node.js, and Hedera SDK
 
+### Basil Odhiambo - Blockchain Developer
+- **Hedera Certified Developer** - [View Certification](https://drive.google.com/file/d/1tTBMXq-mfQ06trKtcIQLlnVcy2GoB1fS/view?usp=sharing)
+- Blockchain development and smart contract integration
+- Hedera ecosystem specialist
+
+### Amos Oluoch - Blockchain Developer
+- **Hedera Certified Developer** - [View Certification](https://drive.google.com/file/d/1uCPFk0eqGPNRj-qDcej5Ns7Ra6d75ggv/view?usp=drivesdk)
+- Distributed systems and blockchain architecture
+- Hedera network integration expert
+
 ## Support
 
 For issues or questions:
