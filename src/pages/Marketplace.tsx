@@ -83,32 +83,6 @@ const Marketplace = () => {
     setPaymentDialog(listing);
   };
 
-  const handleDelist = async (nftId: number) => {
-    if (!walletState.account) return;
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/delist-nft`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          nftId, 
-          ownerAccountId: walletState.account.accountId 
-        }),
-      });
-
-      if (!response.ok) throw new Error('Failed to delist NFT');
-
-      toast({ title: 'NFT delisted successfully!' });
-      await refetch();
-    } catch (error: any) {
-      toast({ 
-        title: 'Failed to delist', 
-        description: error.message, 
-        variant: 'destructive' 
-      });
-    }
-  };
-
   const verifyPayment = async () => {
     if (!paymentDialog || !walletState.account) return;
 
@@ -259,16 +233,6 @@ const Marketplace = () => {
                   <p className="text-xs text-muted-foreground">
                     {isOwnNFT ? 'Your NFT' : `Seller: ${listing.owner_account_id.slice(0, 10)}...`}
                   </p>
-                  {isOwnNFT && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="mt-2 w-full"
-                      onClick={() => handleDelist(listing.id)}
-                    >
-                      Delist NFT
-                    </Button>
-                  )}
                 </div>
               </div>
               );

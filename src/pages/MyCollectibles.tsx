@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import NFTCard from '@/components/NFTCard';
 import { useWallet } from '@/hooks/useWallet';
 import { useNFTs } from '@/hooks/useNFTs';
 import { Wallet, Package, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { API_BASE_URL } from '@/config';
 
@@ -11,6 +13,7 @@ const MyCollectibles = () => {
   const { walletState } = useWallet();
   const { nfts, isLoading, error, refetch } = useNFTs();
   const { toast } = useToast();
+  const [filter, setFilter] = useState<string>('all');
 
   const handleListNFT = async (nftId: number, price: number) => {
     try {
@@ -27,6 +30,29 @@ const MyCollectibles = () => {
       throw new Error(error.message);
     }
   };
+
+  const handleDelist = async (nftId: number) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/delist-nft`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nftId, ownerAccountId: walletState.account?.accountId }),
+      });
+
+      if (!response.ok) throw new Error('Failed to delist NFT');
+      
+      toast({ title: 'NFT delisted successfully!' });
+      await refetch();
+    } catch (error: any) {
+      toast({ title: 'Failed to delist', description: error.message, variant: 'destructive' });
+    }
+  };
+
+  const filteredNFTs = nfts.filter(nft => {
+    if (filter === 'listed') return nft.listed_for_sale === 1;
+    if (filter === 'unlisted') return nft.listed_for_sale === 0;
+    return true;
+  });
 
   if (!walletState.isConnected) {
     return (
@@ -50,21 +76,33 @@ const MyCollectibles = () => {
       <Navigation />
 
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-              <Package className="h-10 w-10 text-primary" />
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                My Collectibles
-              </span>
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Your gaming NFT collection on Hedera
-            </p>
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
+                <Package className="h-10 w-10 text-primary" />
+                <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  My Collectibles
+                </span>
+              </h1>
+              <p className="text-muted-foreground text-lg">
+                {filteredNFTs.length} NFT{filteredNFTs.length !== 1 ? 's' : ''} in your collection
+              </p>
+            </div>
+            <Button onClick={refetch} disabled={isLoading}>
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Refresh'}
+            </Button>
           </div>
-          <Button onClick={refetch} disabled={isLoading}>
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Refresh'}
-          </Button>
+          <Select value={filter} onValueChange={setFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter NFTs" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All NFTs</SelectItem>
+              <SelectItem value="listed">Listed for Sale</SelectItem>
+              <SelectItem value="unlisted">Not Listed</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {isLoading && (
@@ -81,6 +119,17 @@ const MyCollectibles = () => {
           </div>
         )}
 
+        {!isLoading && !error && filteredNFTs.length === 0 && nfts.length > 0 && (
+          <div className="text-center py-20">
+            <Package className="h-20 w-20 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold mb-2">No NFTs Found</h3>
+            <p className="text-muted-foreground">
+              Try adjusting your filter
+            </p>
+            <Button onClick={() => setFilter('all')} className="mt-4">Show All</Button>
+          </div>
+        )}
+
         {!isLoading && !error && nfts.length === 0 && (
           <div className="text-center py-20">
             <Package className="h-20 w-20 mx-auto text-muted-foreground mb-4" />
@@ -91,15 +140,17 @@ const MyCollectibles = () => {
           </div>
         )}
 
-        {!isLoading && !error && nfts.length > 0 && (
+        {!isLoading && !error && filteredNFTs.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {nfts.map((nft) => (
+            {filteredNFTs.map((nft) => (
               <NFTCard
                 key={`${nft.token_id}-${nft.serial_number}`}
                 nft={nft}
                 showActions={true}
-                showListButton={true}
+                showListButton={!nft.listed_for_sale}
+                showDelistButton={nft.listed_for_sale === 1}
                 onList={handleListNFT}
+                onDelist={handleDelist}
               />
             ))}
           </div>

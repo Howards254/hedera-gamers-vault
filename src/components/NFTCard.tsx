@@ -13,10 +13,12 @@ interface NFTCardProps {
   showActions?: boolean;
   onBuy?: () => void;
   onList?: (nftId: number, price: number) => void;
+  onDelist?: (nftId: number) => void;
   showListButton?: boolean;
+  showDelistButton?: boolean;
 }
 
-const NFTCard = ({ nft, showActions = true, onBuy, onList, showListButton = false }: NFTCardProps) => {
+const NFTCard = ({ nft, showActions = true, onBuy, onList, onDelist, showListButton = false, showDelistButton = false }: NFTCardProps) => {
   const [price, setPrice] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
@@ -131,6 +133,12 @@ const NFTCard = ({ nft, showActions = true, onBuy, onList, showListButton = fals
                 </div>
               </DialogContent>
             </Dialog>
+          )}
+          {showDelistButton && onDelist && nft.id && (
+            <Button size="sm" variant="outline" className="flex-1" onClick={() => onDelist(nft.id!)}>
+              <Tag className="h-4 w-4 mr-2" />
+              Delist
+            </Button>
           )}
           {onBuy && (
             <Button size="sm" className="flex-1" onClick={onBuy}>
