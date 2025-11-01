@@ -91,13 +91,22 @@ export async function createNFTRecord(tokenId, serialNumber, ownerAccountId, met
 
 export async function getNFTsByOwner(ownerAccountId) {
   const result = await db.execute({
-    sql: 'SELECT * FROM nfts WHERE owner_account_id = ? ORDER BY created_at DESC',
+    sql: 'SELECT * FROM nfts WHERE owner_account_id = ? AND listed_for_sale = 0 ORDER BY created_at DESC',
     args: [ownerAccountId]
   });
   return result.rows;
 }
 
 export async function listNFTForSale(nftId, price, ownerAccountId) {
+  const result = await db.execute({
+    sql: 'SELECT listed_for_sale FROM nfts WHERE id = ? AND owner_account_id = ?',
+    args: [nftId, ownerAccountId]
+  });
+  
+  if (result.rows[0]?.listed_for_sale === 1) {
+    throw new Error('NFT is already listed for sale');
+  }
+  
   await db.execute({
     sql: 'UPDATE nfts SET listed_for_sale = 1, price = ? WHERE id = ? AND owner_account_id = ?',
     args: [price, nftId, ownerAccountId]
