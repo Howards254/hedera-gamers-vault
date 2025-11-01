@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 
 import { createNFTCollection, mintNFT } from './nft-service.js';
-import { createNFTRecord, getNFTsByOwner, listNFTForSale, getListedNFTs, purchaseNFT, registerGame, getGameByApiKey, getGamesByDeveloper, getAllGames, createTemplate, getTemplatesByGame, getTemplate, updateGameTokenId, logPayment, getFailedPayments, createPendingPurchase } from './database.js';
+import { createNFTRecord, getNFTsByOwner, listNFTForSale, delistNFT, getListedNFTs, purchaseNFT, registerGame, getGameByApiKey, getGamesByDeveloper, getAllGames, createTemplate, getTemplatesByGame, getTemplate, updateGameTokenId, logPayment, getFailedPayments, createPendingPurchase } from './database.js';
 import { startPaymentProcessor } from './payment-processor.js';
 import db from './database.js';
 import { verifyPayment, forwardPaymentToSeller } from './payment-verification.js';
@@ -72,6 +72,16 @@ app.post('/api/list-nft', async (req, res) => {
   try {
     const { nftId, price, ownerAccountId } = req.body;
     await listNFTForSale(nftId, price, ownerAccountId);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/delist-nft', async (req, res) => {
+  try {
+    const { nftId, ownerAccountId } = req.body;
+    await delistNFT(nftId, ownerAccountId);
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });

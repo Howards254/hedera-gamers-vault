@@ -104,6 +104,13 @@ export async function listNFTForSale(nftId, price, ownerAccountId) {
   });
 }
 
+export async function delistNFT(nftId, ownerAccountId) {
+  await db.execute({
+    sql: 'UPDATE nfts SET listed_for_sale = 0, price = NULL WHERE id = ? AND owner_account_id = ?',
+    args: [nftId, ownerAccountId]
+  });
+}
+
 export async function getListedNFTs() {
   const result = await db.execute('SELECT * FROM nfts WHERE listed_for_sale = 1 ORDER BY created_at DESC');
   return result.rows;
