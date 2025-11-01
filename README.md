@@ -273,6 +273,11 @@ Integrate NFT rewards into your game:
 - Distributed systems and blockchain architecture
 - Hedera network integration expert
 
+### Paschal Newton - Blockchain Developer
+- **Hedera Certified Developer** - [View Certification](https://drive.google.com/file/d/15bpwzOmMWGNfZvYdEmNh2d1kNMhlnKnr/view?usp=sharing)
+- Smart contract development and testing
+- Blockchain security specialist
+
 ## Support
 
 For issues or questions:
