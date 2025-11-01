@@ -265,7 +265,7 @@ Integrate NFT rewards into your game:
 
 ### Basil Odhiambo - Blockchain Developer
 - **Hedera Certified Developer** - [View Certification](https://drive.google.com/file/d/1tTBMXq-mfQ06trKtcIQLlnVcy2GoB1fS/view?usp=sharing)
-- Blockchain development and smart contract integration
+- Blockchain development and Hedera Token Service integration
 - Hedera ecosystem specialist
 
 ### Amos Oluoch - Blockchain Developer
@@ -275,7 +275,7 @@ Integrate NFT rewards into your game:
 
 ### Paschal Newton - Blockchain Developer
 - **Hedera Certified Developer** - [View Certification](https://drive.google.com/file/d/15bpwzOmMWGNfZvYdEmNh2d1kNMhlnKnr/view?usp=sharing)
-- Smart contract development and testing
+- Hedera Token Service development and testing
 - Blockchain security specialist
 
 ## Support
