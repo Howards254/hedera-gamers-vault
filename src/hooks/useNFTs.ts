@@ -10,6 +10,8 @@ export interface NFT {
   metadata: string;
   account_id: string;
   created_timestamp: string;
+  listed_for_sale?: number;
+  price?: number;
   metadataJson?: any;
 }
 
@@ -43,7 +45,9 @@ export const useNFTs = () => {
         serial_number: nft.serial_number,
         metadata: nft.metadata_cid,
         account_id: nft.owner_account_id,
-        created_timestamp: nft.created_at
+        created_timestamp: nft.created_at,
+        listed_for_sale: nft.listed_for_sale,
+        price: nft.price
       }));
       
       // Fetch metadata for each NFT
