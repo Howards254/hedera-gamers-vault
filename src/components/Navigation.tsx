@@ -4,7 +4,7 @@ import { Gamepad2, Wallet, Menu, X } from 'lucide-react';
 import { useWallet } from '@/hooks/useWallet';
 import { useState } from 'react';
 
-const Navigation = () => {
+export const Navigation = () => {
   const location = useLocation();
   const { walletState, connectWallet, disconnectWallet, isConnecting } = useWallet();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -226,5 +226,3 @@ const Navigation = () => {
     </nav>
   );
 };
-
-export default Navigation;
