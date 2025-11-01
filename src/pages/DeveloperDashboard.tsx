@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Navigation from '@/components/Navigation';
+import { Navigation } from '@/components/Navigation';
 import { useWallet } from '@/hooks/useWallet';
 import { Button } from '@/components/ui/button';
 import { API_BASE_URL } from '@/config';

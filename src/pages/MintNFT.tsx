@@ -1,4 +1,4 @@
-import Navigation from '@/components/Navigation';
+import { Navigation } from '@/components/Navigation';
 import MintForm from '@/components/MintForm';
 import { useWalletContext } from '@/contexts/WalletContext';
 import { Wallet, Sparkles } from 'lucide-react';

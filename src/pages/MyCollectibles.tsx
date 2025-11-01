@@ -1,4 +1,4 @@
-import Navigation from '@/components/Navigation';
+import { Navigation } from '@/components/Navigation';
 import NFTCard from '@/components/NFTCard';
 import { useWallet } from '@/hooks/useWallet';
 import { useNFTs } from '@/hooks/useNFTs';
