@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
-import Footer from '@/components/Footer';
+import { Footer } from '@/components/Footer';
 import { useWallet } from '@/hooks/useWallet';
 import { API_BASE_URL } from '@/config';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Gamepad2, Twitter, Github, MessageCircle } from 'lucide-react';
 
-const Footer = () => {
+export const Footer = () => {
   return (
     <footer className="border-t border-border bg-card/30 backdrop-blur-sm mt-20">
       <div className="container mx-auto px-4 py-12">
@@ -72,5 +72,3 @@ const Footer = () => {
     </footer>
   );
 };
-
-export default Footer;

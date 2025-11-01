@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import Footer from '@/components/Footer';
+import { Footer } from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { API_BASE_URL } from '@/config';
 

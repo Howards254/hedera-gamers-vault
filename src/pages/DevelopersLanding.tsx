@@ -4,7 +4,7 @@ import { useWallet } from "@/hooks/useWallet";
 import { useNavigate } from "react-router-dom";
 import { Gamepad2, Zap, Shield, Code, Coins, Users } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
-import Footer from "@/components/Footer";
+import { Footer } from "@/components/Footer";
 
 export default function DevelopersLanding() {
   const { accountId, connectWallet } = useWallet();
