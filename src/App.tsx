@@ -12,6 +12,8 @@ import DevelopersLanding from "./pages/DevelopersLanding";
 import DeveloperDashboard from "./pages/DeveloperDashboard";
 import AdminPayments from "./pages/AdminPayments";
 import Documentation from "./pages/Documentation";
+import About from "./pages/About";
+import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +33,8 @@ const App = () => (
             <Route path="/developers" element={<DevelopersLanding />} />
             <Route path="/developer-dashboard" element={<DeveloperDashboard />} />
             <Route path="/docs" element={<Documentation />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

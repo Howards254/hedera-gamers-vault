@@ -64,6 +64,22 @@ const Navigation = () => {
                   Developers
                 </Button>
               </Link>
+              <Link to="/about">
+                <Button
+                  variant={isActive('/about') ? 'default' : 'ghost'}
+                  className="font-medium"
+                >
+                  About
+                </Button>
+              </Link>
+              <Link to="/blog">
+                <Button
+                  variant={isActive('/blog') ? 'default' : 'ghost'}
+                  className="font-medium"
+                >
+                  Blog
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -148,6 +164,22 @@ const Navigation = () => {
                   className="w-full justify-start font-medium"
                 >
                   Developers
+                </Button>
+              </Link>
+              <Link to="/about" onClick={() => setMobileMenuOpen(false)}>
+                <Button
+                  variant={isActive('/about') ? 'default' : 'ghost'}
+                  className="w-full justify-start font-medium"
+                >
+                  About
+                </Button>
+              </Link>
+              <Link to="/blog" onClick={() => setMobileMenuOpen(false)}>
+                <Button
+                  variant={isActive('/blog') ? 'default' : 'ghost'}
+                  className="w-full justify-start font-medium"
+                >
+                  Blog
                 </Button>
               </Link>
 
