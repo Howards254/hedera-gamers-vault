@@ -205,7 +205,7 @@ export default function FAQ() {
           <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
             Frequently Asked Questions
           </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-foreground max-w-3xl mx-auto">
             Everything you need to know about GamersNFT, Hedera, and gaming NFTs
           </p>
         </div>
@@ -223,11 +223,11 @@ export default function FAQ() {
                   return (
                     <div
                       key={id}
-                      className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-purple-500/20 overflow-hidden"
+                      className="bg-card/50 backdrop-blur-sm rounded-lg border border-purple-500/20 overflow-hidden"
                     >
                       <button
                         onClick={() => toggleItem(id)}
-                        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-800/70 transition"
+                        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-card/70 transition"
                       >
                         <span className="font-semibold text-lg pr-4">{faq.q}</span>
                         <ChevronDown
@@ -237,7 +237,7 @@ export default function FAQ() {
                         />
                       </button>
                       {isOpen && (
-                        <div className="px-6 pb-4 text-gray-300 leading-relaxed">
+                        <div className="px-6 pb-4 text-foreground leading-relaxed">
                           {faq.a}
                         </div>
                       )}
@@ -253,17 +253,17 @@ export default function FAQ() {
         <div className="mt-16 text-center">
           <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-12 border border-purple-500/30 max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold mb-4">Still Have Questions?</h2>
-            <p className="text-gray-300 mb-6">
+            <p className="text-foreground mb-6">
               Can't find what you're looking for? Join our community or reach out directly.
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
               <a href="https://discord.gg/gamersnft" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition">
                 Join Discord
               </a>
-              <a href="https://twitter.com/gamersnft" target="_blank" rel="noopener noreferrer" className="bg-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition">
+              <a href="https://twitter.com/gamersnft" target="_blank" rel="noopener noreferrer" className="bg-card px-6 py-3 rounded-lg font-semibold hover:bg-card/80 transition">
                 Follow on Twitter
               </a>
-              <a href="mailto:support@gamersnft.com" className="bg-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition">
+              <a href="mailto:support@gamersnft.com" className="bg-card px-6 py-3 rounded-lg font-semibold hover:bg-card/80 transition">
                 Email Support
               </a>
             </div>

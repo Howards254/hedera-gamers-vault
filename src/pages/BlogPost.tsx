@@ -23,7 +23,7 @@ export default function BlogPost() {
             Introducing GamersNFT: The Future of Gaming Collectibles
           </h1>
 
-          <div className="flex items-center gap-6 text-gray-400 mb-8 pb-8 border-b border-gray-800">
+          <div className="flex items-center gap-6 text-muted-foreground mb-8 pb-8 border-b border-gray-800">
             <div className="flex items-center gap-2">
               <User className="w-4 h-4" />
               <span>Karol Onyango</span>
@@ -36,20 +36,20 @@ export default function BlogPost() {
           </div>
 
           <div className="prose prose-invert prose-lg max-w-none">
-            <p className="text-xl text-gray-300 leading-relaxed mb-6">
+            <p className="text-xl text-foreground leading-relaxed mb-6">
               We're thrilled to announce the official launch of GamersNFT, the first NFT marketplace built specifically 
               for gaming collectibles on Hedera Hashgraph. After months of development and testing, we're ready to 
               revolutionize how gamers and game developers interact with digital collectibles.
             </p>
 
             <h2 className="text-3xl font-bold mt-12 mb-4">Why GamersNFT?</h2>
-            <p className="text-gray-300 leading-relaxed mb-6">
+            <p className="text-foreground leading-relaxed mb-6">
               The gaming industry has been exploring NFTs for years, but most solutions are built on expensive, slow 
               blockchains that make them impractical for everyday gamers. We saw an opportunity to change that by 
               leveraging Hedera's unique advantages:
             </p>
 
-            <ul className="space-y-3 text-gray-300 mb-6">
+            <ul className="space-y-3 text-foreground mb-6">
               <li className="flex items-start gap-3">
                 <span className="text-purple-400 mt-1">•</span>
                 <span><strong>Lightning Fast:</strong> 3-5 second transaction finality means no waiting around</span>
@@ -69,12 +69,12 @@ export default function BlogPost() {
             </ul>
 
             <h2 className="text-3xl font-bold mt-12 mb-4">What Can You Do?</h2>
-            <p className="text-gray-300 leading-relaxed mb-6">
+            <p className="text-foreground leading-relaxed mb-6">
               GamersNFT offers a complete ecosystem for gaming collectibles:
             </p>
 
             <h3 className="text-2xl font-bold mt-8 mb-3">For Gamers</h3>
-            <ul className="space-y-2 text-gray-300 mb-6">
+            <ul className="space-y-2 text-foreground mb-6">
               <li>• Mint unique gaming collectibles with custom attributes</li>
               <li>• Buy and sell NFTs on our marketplace</li>
               <li>• True ownership of your in-game assets</li>
@@ -82,7 +82,7 @@ export default function BlogPost() {
             </ul>
 
             <h3 className="text-2xl font-bold mt-8 mb-3">For Game Developers</h3>
-            <ul className="space-y-2 text-gray-300 mb-6">
+            <ul className="space-y-2 text-foreground mb-6">
               <li>• Simple API to integrate NFTs into your game</li>
               <li>• Earn royalties on secondary sales</li>
               <li>• No blockchain knowledge required</li>
@@ -90,24 +90,24 @@ export default function BlogPost() {
             </ul>
 
             <h2 className="text-3xl font-bold mt-12 mb-4">Our Vision</h2>
-            <p className="text-gray-300 leading-relaxed mb-6">
+            <p className="text-foreground leading-relaxed mb-6">
               We believe that true ownership of digital assets should be accessible to everyone, not just crypto 
               enthusiasts. GamersNFT makes it easy for anyone to mint, buy, and sell gaming collectibles without 
               worrying about high fees or complex blockchain technology.
             </p>
 
-            <p className="text-gray-300 leading-relaxed mb-6">
+            <p className="text-foreground leading-relaxed mb-6">
               Our team of four Hedera Certified Developers has built a platform that combines the best of blockchain 
               technology with a user-friendly experience that gamers expect. We're not just building a marketplace; 
               we're building the future of gaming collectibles.
             </p>
 
             <h2 className="text-3xl font-bold mt-12 mb-4">What's Next?</h2>
-            <p className="text-gray-300 leading-relaxed mb-6">
+            <p className="text-foreground leading-relaxed mb-6">
               This is just the beginning. We have exciting features planned for the coming months:
             </p>
 
-            <ul className="space-y-2 text-gray-300 mb-6">
+            <ul className="space-y-2 text-foreground mb-6">
               <li>• NFT bundles and packs</li>
               <li>• Auction system</li>
               <li>• Mobile app</li>
@@ -116,11 +116,11 @@ export default function BlogPost() {
             </ul>
 
             <h2 className="text-3xl font-bold mt-12 mb-4">Get Started Today</h2>
-            <p className="text-gray-300 leading-relaxed mb-6">
+            <p className="text-foreground leading-relaxed mb-6">
               Ready to join the future of gaming collectibles? Here's how to get started:
             </p>
 
-            <ol className="space-y-3 text-gray-300 mb-8">
+            <ol className="space-y-3 text-foreground mb-8">
               <li className="flex items-start gap-3">
                 <span className="text-purple-400 font-bold">1.</span>
                 <span>Install HashPack wallet (available for Chrome and mobile)</span>
@@ -137,14 +137,14 @@ export default function BlogPost() {
 
             <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-8 border border-purple-500/30 mt-12">
               <h3 className="text-2xl font-bold mb-4">Join Our Community</h3>
-              <p className="text-gray-300 mb-6">
+              <p className="text-foreground mb-6">
                 Be part of the GamersNFT community and stay updated with the latest features, tutorials, and announcements.
               </p>
               <div className="flex gap-4">
                 <Link to="/mint" className="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition">
                   Start Minting
                 </Link>
-                <Link to="/marketplace" className="bg-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition">
+                <Link to="/marketplace" className="bg-card px-6 py-3 rounded-lg font-semibold hover:bg-card/80 transition">
                   Browse Marketplace
                 </Link>
               </div>
