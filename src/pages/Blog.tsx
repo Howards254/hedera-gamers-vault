@@ -8,7 +8,7 @@ const blogPosts = [
     title: "Introducing GamersNFT: The Future of Gaming Collectibles",
     excerpt: "We're excited to announce the launch of GamersNFT, the first NFT marketplace built specifically for gaming collectibles on Hedera Hashgraph.",
     author: "Karol Onyango",
-    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    date: "October 31, 2024",
     category: "Announcement",
     readTime: "5 min read"
   }

@@ -30,7 +30,7 @@ export default function BlogPost() {
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span>{new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+              <span>October 31, 2024</span>
             </div>
             <span>5 min read</span>
           </div>
