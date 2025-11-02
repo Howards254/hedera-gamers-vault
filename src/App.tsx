@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WalletProvider } from "@/contexts/WalletContext";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import MyCollectibles from "./pages/MyCollectibles";
@@ -24,6 +25,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <WalletProvider>
+        <AnimatedBackground />
         <Toaster />
         <Sonner />
         <BrowserRouter>
