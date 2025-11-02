@@ -5,18 +5,18 @@ import { Link } from "react-router-dom";
 
 export default function BlogPost() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="min-h-screen bg-transparent">
       <Navigation />
       
       <div className="container mx-auto px-4 py-16 max-w-4xl">
-        <Link to="/blog" className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 mb-8">
+        <Link to="/blog" className="inline-flex items-center gap-2 text-primary hover:text-purple-300 mb-8">
           <ArrowLeft className="w-4 h-4" />
           Back to Blog
         </Link>
 
         <article>
           <div className="mb-8">
-            <span className="bg-purple-500 px-3 py-1 rounded-full text-sm font-semibold">Announcement</span>
+            <span className="bg-primary px-3 py-1 rounded-full text-sm font-semibold">Announcement</span>
           </div>
 
           <h1 className="text-5xl font-bold mb-6">
@@ -51,19 +51,19 @@ export default function BlogPost() {
 
             <ul className="space-y-3 text-foreground mb-6">
               <li className="flex items-start gap-3">
-                <span className="text-purple-400 mt-1">•</span>
+                <span className="text-primary mt-1">•</span>
                 <span><strong>Lightning Fast:</strong> 3-5 second transaction finality means no waiting around</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-purple-400 mt-1">•</span>
+                <span className="text-primary mt-1">•</span>
                 <span><strong>Ultra Cheap:</strong> $0.0001 per transaction vs $50+ on Ethereum</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-purple-400 mt-1">•</span>
+                <span className="text-primary mt-1">•</span>
                 <span><strong>Eco-Friendly:</strong> Carbon negative blockchain with minimal energy consumption</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-purple-400 mt-1">•</span>
+                <span className="text-primary mt-1">•</span>
                 <span><strong>Enterprise Grade:</strong> Trusted by Google, IBM, and major corporations</span>
               </li>
             </ul>
@@ -122,26 +122,26 @@ export default function BlogPost() {
 
             <ol className="space-y-3 text-foreground mb-8">
               <li className="flex items-start gap-3">
-                <span className="text-purple-400 font-bold">1.</span>
+                <span className="text-primary font-bold">1.</span>
                 <span>Install HashPack wallet (available for Chrome and mobile)</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-purple-400 font-bold">2.</span>
+                <span className="text-primary font-bold">2.</span>
                 <span>Connect your wallet on GamersNFT</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-purple-400 font-bold">3.</span>
+                <span className="text-primary font-bold">3.</span>
                 <span>Start minting or browse the marketplace</span>
               </li>
             </ol>
 
-            <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-8 border border-purple-500/30 mt-12">
+            <div className="bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg p-8 border border-primary/30 mt-12">
               <h3 className="text-2xl font-bold mb-4">Join Our Community</h3>
               <p className="text-foreground mb-6">
                 Be part of the GamersNFT community and stay updated with the latest features, tutorials, and announcements.
               </p>
               <div className="flex gap-4">
-                <Link to="/mint" className="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition">
+                <Link to="/mint" className="bg-gradient-to-r from-primary to-secondary px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition">
                   Start Minting
                 </Link>
                 <Link to="/marketplace" className="bg-card px-6 py-3 rounded-lg font-semibold hover:bg-card/80 transition">

@@ -196,13 +196,13 @@ export default function FAQ() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="min-h-screen bg-transparent">
       <Navigation />
       
       <div className="container mx-auto px-4 py-16">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
             Frequently Asked Questions
           </h1>
           <p className="text-xl text-foreground max-w-3xl mx-auto">
@@ -214,7 +214,7 @@ export default function FAQ() {
         <div className="max-w-4xl mx-auto space-y-12">
           {faqs.map((category, categoryIndex) => (
             <div key={categoryIndex}>
-              <h2 className="text-3xl font-bold mb-6 text-purple-400">{category.category}</h2>
+              <h2 className="text-3xl font-bold mb-6 text-primary">{category.category}</h2>
               <div className="space-y-4">
                 {category.questions.map((faq, faqIndex) => {
                   const id = `${categoryIndex}-${faqIndex}`;
@@ -223,7 +223,7 @@ export default function FAQ() {
                   return (
                     <div
                       key={id}
-                      className="bg-card/50 backdrop-blur-sm rounded-lg border border-purple-500/20 overflow-hidden"
+                      className="bg-card/50 backdrop-blur-sm rounded-lg border border-primary/20 overflow-hidden"
                     >
                       <button
                         onClick={() => toggleItem(id)}
@@ -231,7 +231,7 @@ export default function FAQ() {
                       >
                         <span className="font-semibold text-lg pr-4">{faq.q}</span>
                         <ChevronDown
-                          className={`w-5 h-5 text-purple-400 flex-shrink-0 transition-transform ${
+                          className={`w-5 h-5 text-primary flex-shrink-0 transition-transform ${
                             isOpen ? 'transform rotate-180' : ''
                           }`}
                         />
@@ -251,13 +251,13 @@ export default function FAQ() {
 
         {/* Still Have Questions */}
         <div className="mt-16 text-center">
-          <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-12 border border-purple-500/30 max-w-3xl mx-auto">
+          <div className="bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg p-12 border border-primary/30 max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold mb-4">Still Have Questions?</h2>
             <p className="text-foreground mb-6">
               Can't find what you're looking for? Join our community or reach out directly.
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
-              <a href="https://discord.gg/gamersnft" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition">
+              <a href="https://discord.gg/gamersnft" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-primary to-secondary px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition">
                 Join Discord
               </a>
               <a href="https://twitter.com/gamersnft" target="_blank" rel="noopener noreferrer" className="bg-card px-6 py-3 rounded-lg font-semibold hover:bg-card/80 transition">

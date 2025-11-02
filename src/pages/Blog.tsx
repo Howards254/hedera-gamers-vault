@@ -16,13 +16,13 @@ const blogPosts = [
 
 export default function Blog() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="min-h-screen bg-transparent">
       <Navigation />
       
       <div className="container mx-auto px-4 py-16">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
             GamersNFT Blog
           </h1>
           <p className="text-xl text-foreground max-w-3xl mx-auto">
@@ -32,9 +32,9 @@ export default function Blog() {
 
         {/* Featured Post */}
         <div className="mb-16">
-          <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg p-8 border border-purple-500/30">
+          <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg p-8 border border-primary/30">
             <div className="flex items-center gap-2 mb-4">
-              <span className="bg-purple-500 px-3 py-1 rounded-full text-sm font-semibold">Featured</span>
+              <span className="bg-primary px-3 py-1 rounded-full text-sm font-semibold">Featured</span>
               <span className="text-muted-foreground">{blogPosts[0].category}</span>
             </div>
             <h2 className="text-3xl font-bold mb-4">{blogPosts[0].title}</h2>
@@ -51,7 +51,7 @@ export default function Blog() {
               <span>{blogPosts[0].readTime}</span>
             </div>
             <a href="/blog/introducing-gamersnft">
-              <button className="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition flex items-center gap-2">
+              <button className="bg-gradient-to-r from-primary to-secondary px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition flex items-center gap-2">
                 Read More <ArrowRight className="w-4 h-4" />
               </button>
             </a>
@@ -60,7 +60,7 @@ export default function Blog() {
 
         {/* Coming Soon Section */}
         <div className="text-center py-16">
-          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-12 border border-purple-500/20">
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-12 border border-primary/20">
             <h2 className="text-2xl font-bold mb-4">More Articles Coming Soon</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               We're working on more tutorials, guides, and insights about gaming NFTs and Hedera blockchain. 
@@ -71,7 +71,7 @@ export default function Blog() {
 
         {/* Newsletter Section */}
         <div className="mt-16">
-          <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-12 border border-purple-500/30 text-center">
+          <div className="bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg p-12 border border-primary/30 text-center">
             <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
             <p className="text-foreground mb-6 max-w-2xl mx-auto">
               Subscribe to our newsletter for the latest updates, tutorials, and insights about gaming NFTs and Hedera blockchain.
@@ -80,9 +80,9 @@ export default function Blog() {
               <input 
                 type="email" 
                 placeholder="Enter your email" 
-                className="flex-1 px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none"
+                className="flex-1 px-4 py-3 rounded-lg bg-card border border-border focus:border-primary focus:outline-none"
               />
-              <button className="bg-gradient-to-r from-purple-500 to-pink-600 px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition whitespace-nowrap">
+              <button className="bg-gradient-to-r from-primary to-secondary px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition whitespace-nowrap">
                 Subscribe
               </button>
             </div>
