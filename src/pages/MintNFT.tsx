@@ -8,7 +8,7 @@ const MintNFT = () => {
 
   if (!walletState.isConnected) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-transparent">
         <Navigation />
         <div className="container mx-auto px-4 py-20">
           <div className="text-center max-w-md mx-auto space-y-4">
@@ -24,7 +24,7 @@ const MintNFT = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent">
       <Navigation />
 
       <div className="container mx-auto px-4 py-8">

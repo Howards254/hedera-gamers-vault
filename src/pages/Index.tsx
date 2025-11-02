@@ -8,7 +8,7 @@ import { Gamepad2, Zap, Shield, TrendingUp, Sparkles, Code, Users, Coins, Rocket
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent">
       <Navigation />
 
       {/* Hero Section */}

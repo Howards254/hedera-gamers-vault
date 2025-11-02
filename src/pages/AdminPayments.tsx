@@ -39,7 +39,7 @@ const AdminPayments = () => {
 
   if (!walletState.isConnected) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-transparent">
         <Navigation />
         <div className="container mx-auto px-4 py-20">
           <Card className="max-w-2xl mx-auto border-destructive/20">
@@ -59,7 +59,7 @@ const AdminPayments = () => {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-transparent">
         <Navigation />
         <div className="container mx-auto px-4 py-20">
           <Card className="max-w-2xl mx-auto border-destructive/20">
@@ -87,7 +87,7 @@ const AdminPayments = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent">
       <Navigation />
       
       <div className="container mx-auto px-4 py-8">
